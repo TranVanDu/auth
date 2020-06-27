@@ -26,7 +26,7 @@ export default function (state = INIT_STATE, action) {
                 isAuth: action.payload.isAuth,
             };
         case LOGOUT_USER:
-            return { ...state, user: {}, isAuth: false };
+            return { user: {}, isAuth: false };
         default:
             return state;
     }

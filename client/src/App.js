@@ -9,19 +9,21 @@ import {
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import NarBar from "./components/screens/Navbar/Navbar";
-import Footer from "./components/screens/footer/footer";
+import Footer from "./components/screens/Footer/Footer";
 import { Spin } from "antd";
-import Home from "./components/screens/Home/Home";
-import Login from "./components/Auth/Login";
-import Register from "./components/Auth/Resgister";
+import { Routes } from "./routes/index";
 import { getCookie } from "./helpers/session";
 import { getAuthUser } from "./actions/AuthActions";
 import { useSelector, useDispatch } from "react-redux";
+import { InstagramOutlined } from "@ant-design/icons";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "./App.css";
 
 const Routing = () => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
-    const [isLoading, setIsLoading] = useState(true);
+    // const [isLoading, setIsLoading] = useState(true);
     const history = useHistory();
     useEffect(() => {
         let token = getCookie("insta_token");
@@ -43,31 +45,57 @@ const Routing = () => {
             history.push("/login");
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
     return (
         <Switch>
-            <Route exact path="/" component={Home} />
+            {Routes.map((item, index) => (
+                <Route
+                    key={index}
+                    exact={item.exact}
+                    path={item.path}
+                    render={(props) => <item.component {...props} />}
+                />
+            ))}
+            {/* <Route exact path="/" component={Home} />
             <Route path="/login" component={Login} />
-            <Route path="/register" component={Register} />
+            <Route path="/register" component={Register} /> */}
         </Switch>
     );
 };
 
 function App() {
+    const [isLoading, setIsLoading] = useState(false);
+    useEffect(() => {
+        setIsLoading(true);
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, []);
     return (
         <Router>
-            <Suspense fallback={<Spin size="large" />}>
-                <NarBar />
+            {!isLoading ? (
+                <Suspense fallback={<Spin size="large" />}>
+                    <NarBar />
+                    <div className="Content">
+                        <Routing />
+                    </div>
+                    <Footer />
+                    <ToastContainer />
+                </Suspense>
+            ) : (
                 <div
                     style={{
-                        paddingTop: "69px",
-                        minHeight: "calc(100vh - 60px)",
+                        height: "100vh",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                     }}
                 >
-                    <Routing />
+                    <InstagramOutlined style={{ fontSize: "90px" }} />
                 </div>
-                <Footer />
-                <ToastContainer />
-            </Suspense>
+            )}
         </Router>
     );
 }

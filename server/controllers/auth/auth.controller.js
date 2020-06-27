@@ -132,7 +132,15 @@ exports.loginFacebook = (req, res) => {
         .then((response) => response.json())
         .then((response) => {
             const { name, email, picture } = response;
+            if (!picture) {
+                return res.status(422).json({
+                    status: "error",
+                    status_code: 422,
+                    message: "Đã xảy ra lỗi",
+                });
+            }
             let { url } = picture.data;
+
             User.findOne({ email: email }).exec((err, dataUser) => {
                 if (dataUser) {
                     let token = jwt.sign({ _id: dataUser._id }, JWT_KEY, {

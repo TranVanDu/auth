@@ -28,7 +28,7 @@ function NavBar() {
             style={{ position: "fixed", zIndex: 5, width: "100%" }}
         >
             <div className="menu__logo">
-                <Link to={user.isAuth ? "/" : "/login"}>Instagram</Link>
+                <Link to={user.isAuth ? "/" : "/login"}>APP</Link>
             </div>
             <div className="menu__search">
                 <Search

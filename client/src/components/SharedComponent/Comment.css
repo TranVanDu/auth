@@ -1,0 +1,30 @@
+.ant-card-actions>li {
+	color: rgba(0, 0, 0, 0.45);
+	margin: 0px;
+}
+
+form .form__input {
+	border: none;
+	padding: 12px;
+	flex-grow: 1;
+	background-color: rgba(248, 246, 246, 0.1);
+}
+
+form .form__input:focus {
+	color: #666;
+	border: none !important;
+	outline: none;
+
+}
+
+form .form__button {
+	border: none;
+	color: blue;
+	padding: 10px;
+	background-color: rgba(248, 246, 246, 0.45);
+}
+
+form .form__button:focus {
+	border: none !important;
+	outline: none;
+}

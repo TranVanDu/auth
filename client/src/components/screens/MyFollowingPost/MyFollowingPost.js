@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import {
-    getAllPosts,
-    likePost,
-    unlikePost,
-} from "../../../actions/PostActions";
+import { getSubPost, likePost, unlikePost } from "../../../actions/PostActions";
 import { Skeleton, Card, Result, Button, Avatar, Spin } from "antd";
 import {
     LeftOutlined,
@@ -16,10 +12,10 @@ import {
     ShareAltOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
-import Menu from "./Menu";
+import Menu from "../Home/Menu";
 import Slider from "react-slick";
 import CommentInput from "../../SharedComponent/CommentInput";
-import "./Home.css";
+import "../Home/Home.css";
 
 function SampleNextArrow(props) {
     const { onClick } = props;
@@ -39,10 +35,10 @@ function SamplePrevArrow(props) {
     );
 }
 
-const Home = () => {
+const MyFollowingPost = () => {
     const history = useHistory();
     const dispatch = useDispatch();
-    const allposts = useSelector((state) => state.post.allPosts);
+    const subPosts = useSelector((state) => state.post.subPosts);
     const user = useSelector((state) => state.user.user);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -51,7 +47,7 @@ const Home = () => {
         setIsLoading(true);
         const fecthData = async () => {
             try {
-                await dispatch(getAllPosts());
+                await dispatch(getSubPost());
                 if (!didCancel) {
                     setTimeout(() => {
                         setIsLoading(false);
@@ -69,12 +65,12 @@ const Home = () => {
 
     const like = async (id) => {
         try {
-            await dispatch(likePost({ postId: id }, "all"));
+            await dispatch(likePost({ postId: id }, "sub"));
         } catch (err) {}
     };
     const unlike = async (id) => {
         try {
-            await dispatch(unlikePost({ postId: id }, "all"));
+            await dispatch(unlikePost({ postId: id }, "sub"));
         } catch (err) {}
     };
 
@@ -90,9 +86,9 @@ const Home = () => {
     };
     return (
         <div>
-            {allposts.posts.length > 0 ? (
+            {subPosts.posts.length > 0 ? (
                 <div>
-                    {allposts.posts.map((item, index) => {
+                    {subPosts.posts.map((item, index) => {
                         return (
                             <Card
                                 className="Home_Card"
@@ -155,7 +151,7 @@ const Home = () => {
                                         <CommentInput
                                             key="comment"
                                             postId={item._id}
-                                            flag="all"
+                                            flag="sub"
                                         />
                                     </Skeleton>,
                                 ]}
@@ -165,7 +161,7 @@ const Home = () => {
                                         {item.body && (
                                             <div
                                                 style={{
-                                                    padding: "16px",
+                                                    padding: "20px 20px",
                                                     fontSize: "14px",
                                                 }}
                                             >
@@ -197,13 +193,13 @@ const Home = () => {
                                     <Skeleton.Input
                                         style={{ width: "600px" }}
                                         active={true}
-                                        size={200}
+                                        size={300}
                                     />
                                 )}
                                 <Skeleton
                                     loading={isLoading}
                                     active
-                                    paragraph={{ rows: 0 }}
+                                    paragraph={{ rows: 1 }}
                                 >
                                     <div
                                         style={{
@@ -279,13 +275,13 @@ const Home = () => {
                     ) : (
                         <Result
                             status="404"
-                            subTitle="Chưa có bài viết nào, mời bạn tạo bài viết"
+                            subTitle="Chưa có bài viết nào, mời bạn follow thêm nhiều người bạn nữa"
                             extra={
                                 <Button
                                     type="primary"
-                                    onClick={() => history.push("/create-post")}
+                                    onClick={() => history.push("/")}
                                 >
-                                    Tạo bài viết
+                                    Back Home
                                 </Button>
                             }
                         />
@@ -296,4 +292,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default MyFollowingPost;

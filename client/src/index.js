@@ -8,6 +8,7 @@ import { createStore, applyMiddleware, compose } from "redux";
 import { Provider } from "react-redux";
 import Thunk from "redux-thunk";
 import reducers from "./reducers";
+import "./index.css";
 
 const composeEnhancers =
     typeof window === "object" && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__

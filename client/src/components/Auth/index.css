@@ -18,8 +18,10 @@ body {
 .container h1 {
 	color: #c3226e;
 	font-weight: bold;
-	font-family: "Grand Hotel",
-		cursive;
+	font-family: "Montserrat",
+		sans-serif;
+	/* font-family: "Grand Hotel",
+		cursive; */
 	margin: 0;
 }
 

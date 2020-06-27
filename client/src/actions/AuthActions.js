@@ -5,13 +5,13 @@ import { toast } from "react-toastify";
 import { setCookie, removeCookie } from "../helpers/session";
 
 export const resgisterUser = (data) => (dispatch) => {
-    return new Promise((reslove, reject) => {
+    return new Promise((resolve, reject) => {
         return api
             .post(`${API_URL}/signup`, data)
             .then((res) => {
                 dispatch({ type: REGISTER_USER, payload: res.data });
                 toast.success("Đăng ký tài khoản thành công");
-                reslove(res.data);
+                resolve(res.data);
             })
             .catch((err) => {
                 console.log("error", err);
@@ -22,7 +22,7 @@ export const resgisterUser = (data) => (dispatch) => {
 };
 
 export const loginUser = (data) => (dispatch) => {
-    return new Promise((reslove, reject) => {
+    return new Promise((resolve, reject) => {
         return api
             .post(`${API_URL}/login`, data)
             .then((res) => {
@@ -31,7 +31,8 @@ export const loginUser = (data) => (dispatch) => {
                 // else setCookie("insta_token", res.data.data.token, 1 / 24);
                 setCookie("insta_token", res.data.data.token, 1 / 24);
                 dispatch({ type: LOGIN_USER, payload: res.data.data });
-                reslove(res.data);
+                toast.success("Đăng nhập thành công");
+                resolve(res.data);
             })
             .catch((err) => {
                 console.log("error", err);
@@ -41,54 +42,56 @@ export const loginUser = (data) => (dispatch) => {
     });
 };
 export const loginFacebook = (data) => (dispatch) => {
-    return new Promise((reslove, reject) => {
+    return new Promise((resolve, reject) => {
         return api
             .post(`${API_URL}/login-facebook`, data)
             .then((res) => {
                 setCookie("insta_token", res.data.data.token, 1 / 24);
                 dispatch({ type: LOGIN_USER, payload: res.data.data });
-                reslove(res.data);
+                toast.success("Đăng nhập thành công");
+                resolve(res.data);
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error(err.response.data.message);
+                toast.error("Đã có lỗi xảy ra");
                 reject(err);
             });
     });
 };
 export const loginGoogle = (data) => (dispatch) => {
-    return new Promise((reslove, reject) => {
+    return new Promise((resolve, reject) => {
         return api
             .post(`${API_URL}/login-google`, data)
             .then((res) => {
                 setCookie("insta_token", res.data.data.token, 1 / 24);
                 dispatch({ type: LOGIN_USER, payload: res.data.data });
-                reslove(res.data);
+                toast.success("Đăng nhập thành công");
+                resolve(res.data);
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error(err.response.data.message);
+                toast.error("Đã có lỗi xảy ra");
                 reject(err);
             });
     });
 };
 
 export const logOut = () => (dispatch) => {
-    return new Promise((reslove, reject) => {
+    return new Promise((resolve, reject) => {
         removeCookie("insta_token");
         dispatch({ type: LOGOUT_USER });
         toast.info("Logout success");
-        reslove(true);
+        resolve(true);
     });
 };
 
 export const getAuthUser = (data) => (dispatch) => {
-    return new Promise((reslove, reject) => {
+    return new Promise((resolve, reject) => {
         return api
             .get(`${API_URL}/users/auth`)
             .then((res) => {
                 dispatch({ type: GET_AUTH_USER, payload: res.data.data });
-                reslove(res.data);
+                resolve(res.data);
             })
             .catch((err) => {
                 console.log("error", err);

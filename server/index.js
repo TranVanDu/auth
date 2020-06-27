@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const PORT = process.env.PORT || 5000;
+const requireLogin = require("./middleware/requireLogin");
 const { MONGO_URI } = require("./config/key");
 
 //connect mongo
@@ -44,11 +45,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // support parsing of application/json type post data
 app.use(bodyParser.json());
 
-app.get("/wake-up", (req, res) => res.json("👌"));
+app.get("/", (req, res) => res.json("👌hello word! Welcom my friend"));
 app.use("/api", require("./routes/auth"));
-app.use("/api/users", require("./routes/user"));
-app.u;
-
+app.use("/api/users", requireLogin, require("./routes/user"));
+app.use("/api/posts", requireLogin, require("./routes/post"));
+app.use("/uploads", express.static("uploads"));
 // Serve static assets if in production
 if (process.env.NODE_ENV === "production") {
     // Set static folder

@@ -1,0 +1,31 @@
+.slide_arrow_next {
+	display: none;
+	position: absolute;
+	font-size: 20px;
+	right: 5px;
+	top: 50%;
+	background: rgba(0, 0, 0, 0.2);
+	color: #fff;
+	z-index: 3;
+	cursor: pointer;
+}
+
+.slide_arrow_prev {
+	display: none;
+	position: absolute;
+	font-size: 20px;
+	left: 5px;
+	top: 50%;
+	background: rgba(0, 0, 0, 0.2);
+	color: #fff;
+	z-index: 3;
+	cursor: pointer;
+}
+
+.Home_Card .slick-slider:hover .slide_arrow_next {
+	display: block;
+}
+
+.Home_Card .slick-slider:hover .slide_arrow_prev {
+	display: block;
+}

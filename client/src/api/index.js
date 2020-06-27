@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 const api = axios.create({
     baseURL: "http://localhost:5000",
-    timeout: 10000,
+    timeout: 15000,
     crossDomain: true,
     headers: {
         "Content-Type": "application/json",

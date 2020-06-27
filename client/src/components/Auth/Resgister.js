@@ -20,23 +20,27 @@ export default function Register(props) {
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
     const responseFacebook = async (response) => {
-        const data = {
-            userID: response.userID,
-            accessToken: response.accessToken,
-        };
-        let result = await dispatch(loginFacebook(data));
-        if (result.data.isAuth) {
-            history.push("/");
+        if (response.userID) {
+            const data = {
+                userID: response.userID,
+                accessToken: response.accessToken,
+            };
+            let result = await dispatch(loginFacebook(data));
+            if (result.data.isAuth) {
+                history.push("/");
+            }
         }
     };
 
     const responseGoogle = async (response) => {
-        const data = {
-            tokenId: response.tokenId,
-        };
-        let result = await dispatch(loginGoogle(data));
-        if (result.data.isAuth) {
-            history.push("/");
+        if (response.tokenId) {
+            const data = {
+                tokenId: response.tokenId,
+            };
+            let result = await dispatch(loginGoogle(data));
+            if (result.data.isAuth) {
+                history.push("/");
+            }
         }
     };
     return (
@@ -225,7 +229,7 @@ export default function Register(props) {
                                     style={{ margin: "10px" }}
                                 >
                                     {isLoading && (
-                                        <i class="fa fa-spinner fa-spin" />
+                                        <i className="fa fa-spinner fa-spin" />
                                     )}
                                     Sign Up
                                 </button>

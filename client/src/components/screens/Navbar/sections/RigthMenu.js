@@ -1,18 +1,30 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
-import { Menu } from "antd";
-import { withRouter, Link, useHistory } from "react-router-dom";
+import { Menu, Modal } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { withRouter, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "../../../../actions/AuthActions";
+
+const { confirm } = Modal;
 
 function RightMenu(props) {
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
-    const history = useHistory();
+    // const history = useHistory();
 
-    const logoutHandler = async () => {
-        await dispatch(logOut());
-        history.push("/login");
+    const logoutHandler = () => {
+        confirm({
+            title: "Bạn có muốn đăng xuất",
+            icon: <ExclamationCircleOutlined />,
+            onOk: async () => {
+                await dispatch(logOut());
+                window.location.reload();
+            },
+            onCancel() {
+                console.log("Cancel");
+            },
+        });
     };
     if (user.user && !user.isAuth) {
         return (
