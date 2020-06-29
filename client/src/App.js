@@ -42,7 +42,7 @@ const Routing = () => {
                 });
             }
         } else {
-            history.push("/login");
+            if (history.location.pathname !== "/login") history.push("/login");
         }
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

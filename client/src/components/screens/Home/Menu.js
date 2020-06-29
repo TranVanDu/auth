@@ -18,6 +18,7 @@ const Menu = (props) => {
             setTimeout(() => {
                 setIsLoading(false);
                 setVisiable(false);
+                props.onClose();
             }, 800);
         } catch (err) {
             console.log(err);
@@ -71,7 +72,13 @@ const Menu = (props) => {
 export default Menu;
 
 Menu.propTypes = {
+    onClose: PropTypes.func,
     post_id: PropTypes.string.isRequired,
-    user_id: PropTypes.string.isRequired,
+    user_id: PropTypes.string,
     posted_by: PropTypes.string.isRequired,
+};
+
+Menu.defaultProps = {
+    onClose: () => {},
+    posted_by: "",
 };

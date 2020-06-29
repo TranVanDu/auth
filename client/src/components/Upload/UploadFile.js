@@ -58,6 +58,7 @@ class UploadFile extends Component {
             fileList,
             previewTitle,
         } = this.state;
+        const number = this.props.number || 5;
         const uploadButton = (
             <div>
                 <PlusOutlined />
@@ -75,7 +76,7 @@ class UploadFile extends Component {
                     onPreview={this.handlePreview}
                     onChange={this.handleChange}
                 >
-                    {fileList.length >= 6 ? null : uploadButton}
+                    {fileList.length >= number ? null : uploadButton}
                 </Upload>
                 <Modal
                     visible={previewVisible}

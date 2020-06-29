@@ -1,6 +1,8 @@
 const Post = require("../../models/post");
 const upload = require("../../helper/multer");
 const fs = require("fs");
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Schema.Types;
 const cloudinary = require("../../helper/cloudinary");
 
 //get all post
@@ -127,22 +129,25 @@ module.exports.likePost = (req, res) => {
             $push: { likes: req.user._id },
         },
         { new: true }
-    ).exec((err, result) => {
-        if (err) {
-            return res.status(422).json({
-                status: "error",
-                status_code: 422,
-                message: err,
-            });
-        } else {
-            res.status(200).json({
-                status: "success",
-                status_code: "200",
-                message: "success",
-                data: result,
-            });
-        }
-    });
+    )
+        .populate("postedBy", "_id name avatar")
+        .populate("comments.postedBy", "_id name avatar")
+        .exec((err, result) => {
+            if (err) {
+                return res.status(422).json({
+                    status: "error",
+                    status_code: 422,
+                    message: err,
+                });
+            } else {
+                res.status(200).json({
+                    status: "success",
+                    status_code: "200",
+                    message: "success",
+                    data: result,
+                });
+            }
+        });
 };
 
 // unlike post
@@ -153,22 +158,25 @@ module.exports.unLikePost = (req, res) => {
             $pull: { likes: req.user._id },
         },
         { new: true }
-    ).exec((err, result) => {
-        if (err) {
-            return res.status(422).json({
-                status: "error",
-                status_code: 422,
-                message: err,
-            });
-        } else {
-            res.status(200).json({
-                status: "success",
-                status_code: "200",
-                message: "success",
-                data: result,
-            });
-        }
-    });
+    )
+        .populate("postedBy", "_id name avatar")
+        .populate("comments.postedBy", "_id name avatar")
+        .exec((err, result) => {
+            if (err) {
+                return res.status(422).json({
+                    status: "error",
+                    status_code: 422,
+                    message: err,
+                });
+            } else {
+                res.status(200).json({
+                    status: "success",
+                    status_code: "200",
+                    message: "success",
+                    data: result,
+                });
+            }
+        });
 };
 
 //comment post
@@ -209,7 +217,7 @@ module.exports.commentPost = (req, res) => {
 module.exports.getSubPost = (req, res) => {
     Post.find({ postedBy: { $in: req.user.following } })
         .populate("postedBy", "_id name avatar")
-        .populate("comment.postedBy", "_id name avatar")
+        .populate("comments.postedBy", "_id name avatar")
         .sort({ updatedAt: -1 })
         .limit(10)
         .exec((err, result) => {
@@ -243,6 +251,28 @@ module.exports.getSubPost = (req, res) => {
         });
 };
 
+module.exports.getPost = (req, res) => {
+    Post.findOne({ _id: req.params.postId })
+        .populate("postedBy", "_id name avatar")
+        .populate("comments.postedBy", "_id name avatar")
+        .exec((err, result) => {
+            if (err) {
+                return res.status(422).json({
+                    status: "error",
+                    status_code: 422,
+                    message: err,
+                });
+            } else {
+                res.status(200).json({
+                    status: "success",
+                    status_code: "200",
+                    message: "success",
+                    data: result,
+                });
+            }
+        });
+};
+
 //delete Post
 module.exports.deletePost = async (req, res) => {
     try {
@@ -259,7 +289,6 @@ module.exports.deletePost = async (req, res) => {
             }
             const data = await post.remove();
 
-            console.log(data);
             res.status(200).json({
                 status: "success",
                 status_code: "200",

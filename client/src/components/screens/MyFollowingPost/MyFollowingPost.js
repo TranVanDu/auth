@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getSubPost, likePost, unlikePost } from "../../../actions/PostActions";
+import {
+    getSubPost,
+    likePost,
+    unlikePost,
+    getPost,
+} from "../../../actions/PostActions";
 import { Skeleton, Card, Result, Button, Avatar, Spin } from "antd";
 import {
     LeftOutlined,
@@ -15,6 +20,7 @@ import moment from "moment";
 import Menu from "../Home/Menu";
 import Slider from "react-slick";
 import CommentInput from "../../SharedComponent/CommentInput";
+import CommentPost from "../../SharedComponent/CommentPost";
 import "../Home/Home.css";
 
 function SampleNextArrow(props) {
@@ -41,6 +47,8 @@ const MyFollowingPost = () => {
     const subPosts = useSelector((state) => state.post.subPosts);
     const user = useSelector((state) => state.user.user);
     const [isLoading, setIsLoading] = useState(false);
+    const currentPost = useSelector((state) => state.post.currentPost);
+    const [visible, setVibisle] = useState(false);
 
     useEffect(() => {
         let didCancel = false;
@@ -55,11 +63,15 @@ const MyFollowingPost = () => {
                 }
             } catch (err) {
                 setIsLoading(false);
+                if (err.data.message === "You must be logged in") {
+                    window.location.reload();
+                }
             }
         };
         fecthData();
         return () => {
             didCancel = true;
+            setIsLoading(false);
         };
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -72,6 +84,17 @@ const MyFollowingPost = () => {
         try {
             await dispatch(unlikePost({ postId: id }, "sub"));
         } catch (err) {}
+    };
+
+    const onToggleModal = async (id) => {
+        try {
+            await dispatch(getPost(id));
+            setVibisle(true);
+        } catch (err) {}
+    };
+
+    const onCancel = () => {
+        setVibisle(false);
     };
 
     const settings = {
@@ -244,6 +267,9 @@ const MyFollowingPost = () => {
                                                     marginRight: "7px",
                                                     cursor: "pointer",
                                                 }}
+                                                onClick={() =>
+                                                    onToggleModal(item._id)
+                                                }
                                             />
                                             <span>{item.comments.length}</span>
                                         </div>
@@ -260,6 +286,12 @@ const MyFollowingPost = () => {
                             </Card>
                         );
                     })}
+                    <CommentPost
+                        visible={visible}
+                        onCancel={onCancel}
+                        item={currentPost}
+                        flag="sub"
+                    />
                 </div>
             ) : (
                 <div

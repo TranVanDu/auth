@@ -3,15 +3,18 @@ import PropTypes from "prop-types";
 import { commentPost } from "../../actions/PostActions";
 import { useDispatch } from "react-redux";
 import "./Comment.css";
+
 function CommentInput(props) {
     const [input, setInput] = useState("");
     const dispatch = useDispatch();
 
     const onSubmit = async (event) => {
         event.preventDefault();
-        await dispatch(
-            commentPost({ text: input, postId: props.postId }, props.flag)
-        );
+        if (input.length > 0) {
+            await dispatch(
+                commentPost({ text: input, postId: props.postId }, props.flag)
+            );
+        }
         setInput("");
     };
     return (

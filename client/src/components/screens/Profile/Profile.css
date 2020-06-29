@@ -1,0 +1,167 @@
+.profile {
+	max-width: 600px;
+	margin: 0px auto;
+}
+
+.profile__header {
+	display: flex;
+	justify-content: space-between;
+	padding: 20px 40px;
+	align-items: center;
+}
+
+.profile__header img {
+	border-radius: 50%;
+	position: relative;
+	width: 160px;
+	height: 160px;
+	object-fit: cover;
+	cursor: pointer;
+}
+
+.profile__header--camera {
+	font-size: 24px;
+	border: 5px solid #fff;
+	border-radius: 50%;
+	background: #fff;
+	color: crimson;
+	position: absolute;
+	bottom: 5px;
+	right: 10px;
+	cursor: pointer;
+}
+
+.profile__header--user {
+	padding-left: 30px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	flex-grow: 1;
+}
+
+.profile__header--user>div:nth-child(1) {
+	font-size: 24px;
+	font-weight: 500;
+}
+
+.profile__header--user>div:nth-child(2) {
+	font-size: 20px;
+}
+
+.header--description {
+	display: flex;
+	padding-top: 10px;
+	justify-content: space-between;
+}
+
+.gallery {
+	width: 31.5%;
+	border-radius: 5px;
+	margin: 3px;
+	position: relative;
+}
+
+.gallery img {
+	width: 100%;
+	border-radius: 3px;
+	height: 150px;
+	object-fit: cover;
+}
+
+.gallery__container {
+	background: rgba(0, 0, 0, 0.7);
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	position: absolute;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	border-radius: 3px;
+	z-index: 3;
+	cursor: pointer;
+	opacity: 0;
+}
+
+.gallery__hover {
+	font-size: 18px;
+	color: #fff;
+}
+
+.gallery__container:hover {
+	opacity: 1;
+}
+
+.modal__avatar .ant-upload-select-picture-card {
+	border-radius: 50%;
+}
+
+.modal__avatar .ant-upload-list-item {
+	border-radius: 50%;
+}
+
+.modal__avatar .ant-upload-list-picture-card .ant-upload-list-item-info {
+	border-radius: 50%;
+}
+
+@media (max-width: 992px) {
+	.profile__header img {
+		width: 130px;
+		height: 130px;
+	}
+}
+
+@media (max-width: 768px) {
+	.profile__header img {
+		width: 120px;
+		height: 120px;
+	}
+}
+
+@media (max-width: 576px) {
+	.profile__header {
+		padding: 10px 10px;
+	}
+
+	.profile__header img {
+		width: 100px;
+		height: 100px;
+	}
+
+	.profile__header--camera {
+		font-size: 16px;
+		border: 3px solid #fff;
+		border-radius: 50%;
+		background: #fff;
+		position: absolute;
+		bottom: 5px;
+		right: 10px;
+	}
+
+	.profile__header--user>div:nth-child(1) {
+		font-size: 16px;
+	}
+
+	.profile__header--user>div:nth-child(2) {
+		font-size: 14px;
+	}
+
+	.profile__header--user {
+		padding-left: 10px;
+	}
+
+	.header--description {
+		padding-top: 0px;
+	}
+
+	.gallery img {
+		height: 120px;
+	}
+}
+
+@media (max-width: 480px) {
+	.profile__header img {
+		width: 90px;
+		height: 90px;
+	}
+}

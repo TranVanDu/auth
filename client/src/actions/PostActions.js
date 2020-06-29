@@ -9,6 +9,11 @@ import {
     UN_LIKE_POST,
     COMMENT_ALL_POST,
     COMMENT_SUB_POST,
+    GET_POST,
+    GET_MY_POSTS,
+    LIKE_MY_POST,
+    COMMENT_MY_POST,
+    UN_LIKE_MY_POST,
 } from "./types";
 import api from "../api";
 import { API_URL } from "../config/index";
@@ -20,6 +25,22 @@ export const getAllPosts = (filter) => (dispatch) => {
             .get(`${API_URL}/posts/allposts`, { params: filter })
             .then((res) => {
                 dispatch({ type: GET_ALL_POSTS, payload: res.data });
+                resolve(res.data);
+            })
+            .catch((err) => {
+                console.log("error", err);
+                toast.error(err.response.data.message);
+                reject(err.response);
+            });
+    });
+};
+
+export const getPost = (id) => (dispatch) => {
+    return new Promise((resolve, reject) => {
+        return api
+            .get(`${API_URL}/posts/post/${id}`)
+            .then((res) => {
+                dispatch({ type: GET_POST, payload: res.data });
                 resolve(res.data);
             })
             .catch((err) => {
@@ -73,7 +94,7 @@ export const getSubPost = (filter) => (dispatch) => {
             .catch((err) => {
                 console.log("error", err);
                 toast.error("Đã có lỗi xảy ra");
-                reject(err);
+                reject(err.response);
             });
     });
 };
@@ -85,8 +106,10 @@ export const likePost = (data, flag) => (dispatch) => {
             .then((res) => {
                 if (flag === "all") {
                     dispatch({ type: LIKE_POST, payload: res.data.data });
-                } else {
+                } else if (flag === "sub") {
                     dispatch({ type: LIKE_SUB_POST, payload: res.data.data });
+                } else {
+                    dispatch({ type: LIKE_MY_POST, payload: res.data.data });
                 }
                 resolve(res.data.data);
             })
@@ -105,11 +128,13 @@ export const unlikePost = (data, flag) => (dispatch) => {
             .then((res) => {
                 if (flag === "all") {
                     dispatch({ type: UN_LIKE_POST, payload: res.data.data });
-                } else {
+                } else if (flag === "sub") {
                     dispatch({
                         type: UN_LIKE_SUB_POST,
                         payload: res.data.data,
                     });
+                } else {
+                    dispatch({ type: UN_LIKE_MY_POST, payload: res.data.data });
                 }
                 resolve(res.data.data);
             })
@@ -125,17 +150,18 @@ export const commentPost = (data, flag) => (dispatch) => {
         return api
             .put(`${API_URL}/posts/comments`, data)
             .then((res) => {
-                console.log(res);
                 if (flag === "all") {
                     dispatch({
                         type: COMMENT_ALL_POST,
                         payload: res.data.data,
                     });
-                } else {
+                } else if (flag === "sub") {
                     dispatch({
                         type: COMMENT_SUB_POST,
                         payload: res.data.data,
                     });
+                } else {
+                    dispatch({ type: COMMENT_MY_POST, payload: res.data.data });
                 }
                 resolve(res.data.data);
             })
@@ -143,6 +169,25 @@ export const commentPost = (data, flag) => (dispatch) => {
                 console.log("error", err);
                 toast.error("Đã có lỗi xảy ra");
                 reject(err);
+            });
+    });
+};
+export const getMyPosts = (filter) => (dispatch) => {
+    return new Promise((resolve, reject) => {
+        return api
+            .get(`${API_URL}/posts/myposts`, { params: filter })
+            .then((res) => {
+                dispatch({
+                    type: GET_MY_POSTS,
+                    payload: res.data,
+                });
+
+                resolve(res.data);
+            })
+            .catch((err) => {
+                console.log("error", err);
+                toast.error("Đã có lỗi xảy ra");
+                reject(err.response);
             });
     });
 };

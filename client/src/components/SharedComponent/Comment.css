@@ -7,24 +7,45 @@ form .form__input {
 	border: none;
 	padding: 12px;
 	flex-grow: 1;
-	background-color: rgba(248, 246, 246, 0.1);
+	background-color: rgba(249, 248, 248, 0.1);
 }
 
 form .form__input:focus {
 	color: #666;
 	border: none !important;
 	outline: none;
-
 }
 
 form .form__button {
 	border: none;
 	color: blue;
 	padding: 10px;
-	background-color: rgba(248, 246, 246, 0.45);
+	background-color: rgba(249, 248, 248, 0.45);
 }
 
 form .form__button:focus {
 	border: none !important;
 	outline: none;
+}
+
+.Home_Card .Card__comment {
+	padding: 0px 10px;
+}
+
+.Home_Card .ant-modal-wrap {
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+.Home_Card .ant-modal-body {
+	padding: 7px;
+}
+
+.Home_Card .Card__comment .ant-comment .ant-comment-inner {
+	padding: 7px 0px;
+}
+
+.Home_Card .ant-modal-content .ant-modal-close {
+	top: -22px;
+	right: -22px;
 }

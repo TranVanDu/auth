@@ -1,4 +1,10 @@
-import { REGISTER_USER, LOGIN_USER, GET_AUTH_USER, LOGOUT_USER } from "./types";
+import {
+    REGISTER_USER,
+    LOGIN_USER,
+    GET_AUTH_USER,
+    LOGOUT_USER,
+    UPDATE_AVATAR,
+} from "./types";
 import api from "../api";
 import { API_URL } from "../config/index";
 import { toast } from "react-toastify";
@@ -91,6 +97,23 @@ export const getAuthUser = (data) => (dispatch) => {
             .get(`${API_URL}/users/auth`)
             .then((res) => {
                 dispatch({ type: GET_AUTH_USER, payload: res.data.data });
+                resolve(res.data);
+            })
+            .catch((err) => {
+                console.log("error", err);
+                toast.error(err.response.data.message);
+                reject(err);
+            });
+    });
+};
+
+export const updateAvatar = (data, headers) => (dispatch) => {
+    return new Promise((resolve, reject) => {
+        return api
+            .put(`${API_URL}/users/updateAvatar`, data, headers)
+            .then((res) => {
+                dispatch({ type: UPDATE_AVATAR, payload: res.data.data });
+                toast.success("Cập nhật avatar thành công");
                 resolve(res.data);
             })
             .catch((err) => {

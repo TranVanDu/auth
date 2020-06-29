@@ -3,6 +3,7 @@ import {
     REGISTER_USER,
     GET_AUTH_USER,
     LOGOUT_USER,
+    UPDATE_AVATAR,
 } from "../actions/types";
 const INIT_STATE = {
     user: {},
@@ -20,6 +21,12 @@ export default function (state = INIT_STATE, action) {
                 isAuth: action.payload.isAuth,
             };
         case GET_AUTH_USER:
+            return {
+                ...state,
+                user: action.payload.user,
+                isAuth: action.payload.isAuth,
+            };
+        case UPDATE_AVATAR:
             return {
                 ...state,
                 user: action.payload.user,

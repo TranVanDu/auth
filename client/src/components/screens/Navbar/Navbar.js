@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import RightMenu from "./sections/RigthMenu";
 import { MenuFoldOutlined } from "@ant-design/icons";
 import { Drawer, Button, Input } from "antd";
-import { Link, withRouter } from "react-router-dom";
+import { Link, withRouter, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "./Navbar.css";
 const { Search } = Input;
@@ -11,6 +11,7 @@ const avatarDefault =
     "https://images.unsplash.com/photo-1440589473619-3cde28941638?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60";
 
 function NavBar() {
+    const history = useHistory();
     const [visible, setVisible] = useState(false);
     const user = useSelector((state) => state.user);
 
@@ -51,7 +52,14 @@ function NavBar() {
 
                 <Drawer
                     title={
-                        <div style={{ display: "flex" }}>
+                        <div
+                            style={{ display: "flex", cursor: "pointer" }}
+                            onClick={() =>
+                                history.push(
+                                    user.isAuth ? "/profile" : "/login"
+                                )
+                            }
+                        >
                             <img
                                 src={
                                     user.user.avatar

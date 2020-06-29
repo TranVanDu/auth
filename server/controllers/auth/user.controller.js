@@ -63,7 +63,7 @@ exports.profileUser = (req, res) => {
             } else {
                 Post.find({ postId: req.params._id })
                     .populate("comments.postedBy", "_id name avatar")
-                    .limit(100)
+                    .limit(10)
                     .exec((err, result) => {
                         if (err) {
                             return res.status(422).json({
@@ -205,7 +205,10 @@ exports.updateAvatar = (req, res) => {
                 status: "success",
                 status_code: "200",
                 message: "success",
-                data: { user: result },
+                data: {
+                    user: result,
+                    isAuth: true,
+                },
             });
         });
 };

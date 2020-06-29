@@ -5,6 +5,7 @@ import {
     getAllPosts,
     likePost,
     unlikePost,
+    getPost,
 } from "../../../actions/PostActions";
 import { Skeleton, Card, Result, Button, Avatar, Spin } from "antd";
 import {
@@ -19,6 +20,7 @@ import moment from "moment";
 import Menu from "./Menu";
 import Slider from "react-slick";
 import CommentInput from "../../SharedComponent/CommentInput";
+import CommentPost from "../../SharedComponent/CommentPost";
 import "./Home.css";
 
 function SampleNextArrow(props) {
@@ -38,13 +40,25 @@ function SamplePrevArrow(props) {
         </div>
     );
 }
+const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    initialSlide: 2,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
+};
 
 const Home = () => {
     const history = useHistory();
     const dispatch = useDispatch();
     const allposts = useSelector((state) => state.post.allPosts);
     const user = useSelector((state) => state.user.user);
+    const currentPost = useSelector((state) => state.post.currentPost);
     const [isLoading, setIsLoading] = useState(false);
+    const [visible, setVibisle] = useState(false);
 
     useEffect(() => {
         let didCancel = false;
@@ -59,10 +73,14 @@ const Home = () => {
                 }
             } catch (err) {
                 setIsLoading(false);
+                if (err.data.message === "You must be logged in") {
+                    window.location.reload();
+                }
             }
         };
         fecthData();
         return () => {
+            setIsLoading(false);
             didCancel = true;
         };
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -77,16 +95,15 @@ const Home = () => {
             await dispatch(unlikePost({ postId: id }, "all"));
         } catch (err) {}
     };
+    const onToggleModal = async (id) => {
+        try {
+            await dispatch(getPost(id));
+            setVibisle(true);
+        } catch (err) {}
+    };
 
-    const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        initialSlide: 2,
-        nextArrow: <SampleNextArrow />,
-        prevArrow: <SamplePrevArrow />,
+    const onCancel = () => {
+        setVibisle(false);
     };
     return (
         <div>
@@ -248,6 +265,9 @@ const Home = () => {
                                                     marginRight: "7px",
                                                     cursor: "pointer",
                                                 }}
+                                                onClick={() =>
+                                                    onToggleModal(item._id)
+                                                }
                                             />
                                             <span>{item.comments.length}</span>
                                         </div>
@@ -264,6 +284,12 @@ const Home = () => {
                             </Card>
                         );
                     })}
+                    <CommentPost
+                        visible={visible}
+                        onCancel={onCancel}
+                        item={currentPost}
+                        flag="all"
+                    />
                 </div>
             ) : (
                 <div

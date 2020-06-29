@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // import ClassNames from "classnames";
 import { useDispatch } from "react-redux";
 import { useHistory, Link } from "react-router-dom";
@@ -20,6 +20,8 @@ export default function Login(props) {
     const [formErrorMessage, setFormErrorMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
+    const mounted = useRef(false);
+    // let isMounted = true;
     const responseFacebook = async (response) => {
         if (response.userID) {
             const data = {
@@ -44,6 +46,13 @@ export default function Login(props) {
             }
         }
     };
+
+    useEffect(() => {
+        mounted.current = true;
+        return () => {
+            mounted.current = false;
+        };
+    }, []);
     return (
         <div className="container ">
             <div className="form-container sign-in-container">
@@ -56,12 +65,14 @@ export default function Login(props) {
                         setIsLoading(true);
                         try {
                             let result = await dispatch(loginUser(values));
-                            if (result) {
-                                setTimeout(() => {
+                            if (mounted) {
+                                if (result) {
+                                    setTimeout(() => {
+                                        history.push("/");
+                                    }, 800);
                                     setIsLoading(false);
                                     resetForm({});
-                                    history.push("/");
-                                });
+                                }
                             }
                         } catch (error) {
                             setFormErrorMessage(
