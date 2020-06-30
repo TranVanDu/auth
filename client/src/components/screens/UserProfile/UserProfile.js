@@ -1,31 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Spin, Divider, Empty } from "antd";
-import { getMyPosts, getPost } from "../../../actions/PostActions";
-import { CameraOutlined } from "@ant-design/icons";
+import { Spin, Divider, Empty, Tag } from "antd";
+import { useParams } from "react-router-dom";
+import { getPost } from "../../../actions/PostActions";
+import { getCurrentUser, follow, unfollow } from "../../../actions/UserActions";
 import Carousel, { Modal, ModalGateway } from "react-images";
 import CommentPost from "../../SharedComponent/CommentPost";
-import Gallery from "./Gallery";
-import UploadAvatar from "./UploadAvatar";
-import _ from "lodash";
-import "./Profile.css";
+import Gallery from "../Profile/Gallery";
+//import _ from "lodash";
+import "../Profile/Profile.css";
 
 export default function Profile() {
-    const currentPost = useSelector((state) => state.post.currentPost);
     const dispatch = useDispatch();
+    const profile = useSelector((state) => state.profile);
+    const currentPost = useSelector((state) => state.post.currentPost);
     const user = useSelector((state) => state.user.user);
-    const myPosts = useSelector((state) => state.post.myPosts);
+    const { userId } = useParams();
     const [visible, setVibisle] = useState(false);
-    const [onChange, setOnChange] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [showFollow, setShowFollow] = useState(
+        user.following ? !user.following.includes(userId) : true
+    );
 
     useEffect(() => {
         setIsLoading(true);
         let isMounted = true;
         const fecthPost = async () => {
             try {
-                await dispatch(getMyPosts());
+                await dispatch(getCurrentUser(userId));
                 if (isMounted) {
                     setTimeout(() => {
                         setIsLoading(false);
@@ -33,86 +36,112 @@ export default function Profile() {
                 }
             } catch (err) {
                 setIsLoading(false);
-                if (err.data.message === "You must be logged in") {
-                    window.location.reload();
-                }
+
+                window.location.reload();
             }
         };
         fecthPost();
         return () => {
             isMounted = false;
         };
-    }, [dispatch]);
+    }, [dispatch, userId]);
 
     const toggleModal = () => {
         setModalIsOpen(!modalIsOpen);
     };
     const onToggleModal = async (id) => {
-        try {
-            await dispatch(getPost(id));
-            setVibisle(true);
-        } catch (err) {}
+        await dispatch(getPost(id));
+        setVibisle(true);
     };
-
     const onCancel = () => {
         setVibisle(false);
     };
-    const handleCancel = () => {
-        setOnChange(false);
+    const onFollow = async (id) => {
+        await dispatch(follow({ followId: id }));
+        setShowFollow(false);
+    };
+    const onUnFollow = async (id) => {
+        await dispatch(unfollow({ followId: id }));
+        setShowFollow(true);
     };
 
     return (
         <div>
             {!isLoading ? (
                 <div className="profile">
-                    {!_.isEmpty(user) ? (
+                    {profile.user ? (
                         <div className="profile__header">
                             <div style={{ position: "relative" }}>
                                 <img
-                                    src={user.avatar}
+                                    src={
+                                        /^upload/.test(profile.user.avatar)
+                                            ? `/${profile.user.avatar}`
+                                            : profile.user.avatar
+                                    }
                                     alt="avatar"
                                     onClick={() => setModalIsOpen(true)}
                                 />
-
-                                <CameraOutlined
-                                    className="profile__header--camera"
-                                    onClick={() => setOnChange(true)}
-                                />
                             </div>
                             <div className="profile__header--user">
-                                <div>{user.name}</div>
-                                <div>{user.email}</div>
+                                <div style={{ display: "flex" }}>
+                                    <div>{profile.user.name}</div>
+                                    <div style={{ paddingLeft: "10px" }}>
+                                        {showFollow ? (
+                                            <Tag
+                                                color="geekblue"
+                                                onClick={() =>
+                                                    onFollow(profile.user._id)
+                                                }
+                                            >
+                                                Follow
+                                            </Tag>
+                                        ) : (
+                                            <Tag
+                                                color="volcano"
+                                                onClick={() =>
+                                                    onUnFollow(profile.user._id)
+                                                }
+                                            >
+                                                unFollow
+                                            </Tag>
+                                        )}
+                                    </div>
+                                </div>
+                                <div>{profile.user.email}</div>
                                 <div className="header--description">
                                     <div>
-                                        {myPosts.posts.length > 0
-                                            ? myPosts.posts.length
+                                        {profile.posts.length > 0
+                                            ? profile.posts.length
                                             : 0}
                                         <span> posts</span>
                                     </div>
                                     <div>
-                                        {user.followers.length > 0
-                                            ? user.followers.length
+                                        {profile.user.followers
+                                            ? profile.user.followers.length
                                             : 0}
                                         <span> followers</span>
                                     </div>
                                     <div>
-                                        {user.following.length > 0
-                                            ? user.following.length
+                                        {profile.user.following
+                                            ? profile.user.following.length
                                             : 0}
                                         <span> following</span>
                                     </div>
                                 </div>
                             </div>
-                            <UploadAvatar
-                                visible={onChange}
-                                onCancel={handleCancel}
-                                avatar={user.avatar}
-                            />
                             <ModalGateway>
                                 {modalIsOpen ? (
                                     <Modal onClose={toggleModal}>
                                         <Carousel
-                                            views={[{ src: user.avatar }]}
+                                            views={[
+                                                {
+                                                    src: /^upload/.test(
+                                                        profile.user.avatar
+                                                    )
+                                                        ? `/${profile.user.avatar}`
+                                                        : profile.user.avatar,
+                                                },
+                                            ]}
                                         />
                                     </Modal>
                                 ) : null}
@@ -121,14 +150,14 @@ export default function Profile() {
                     ) : null}
                     <Divider style={{ margin: "5px 0px" }} />
                     <div>
-                        {myPosts.posts.length > 0 ? (
+                        {profile.posts.length > 0 ? (
                             <div
                                 style={{
                                     display: "flex",
                                     flexWrap: "wrap",
                                 }}
                             >
-                                {myPosts.posts.map((post, index) => {
+                                {profile.posts.map((post, index) => {
                                     return (
                                         <Gallery
                                             key={index}

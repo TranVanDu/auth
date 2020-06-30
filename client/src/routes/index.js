@@ -5,6 +5,7 @@ import CreatePost from "../components/screens/CreatePost/CreatePost";
 import NotFound from "../components/screens/NotFound/NotFound";
 import MyFollowingPost from "../components/screens/MyFollowingPost/MyFollowingPost";
 import Profile from "../components/screens/Profile/Profile";
+import UserProfile from "../components/screens/UserProfile/UserProfile";
 export const Routes = [
     {
         path: "/",
@@ -36,6 +37,11 @@ export const Routes = [
         path: "/profile",
         exact: true,
         component: Profile,
+    },
+    {
+        path: "/user/:userId",
+        exact: true,
+        component: UserProfile,
     },
     {
         path: "*",

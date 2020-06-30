@@ -51,9 +51,9 @@ exports.isAuth = (req, res) => {
 };
 
 exports.profileUser = (req, res) => {
-    User.findById(req.params._id)
+    User.findById(req.params.id)
         .select("-password")
-        .exec((err, result) => {
+        .exec((err, user) => {
             if (err) {
                 return res.status(422).json({
                     status: "error",
@@ -61,7 +61,7 @@ exports.profileUser = (req, res) => {
                     message: err,
                 });
             } else {
-                Post.find({ postId: req.params._id })
+                Post.find({ postedBy: req.params.id })
                     .populate("comments.postedBy", "_id name avatar")
                     .limit(10)
                     .exec((err, result) => {
@@ -103,7 +103,7 @@ exports.follow = (req, res) => {
             $push: { followers: req.user._id },
         },
         { new: true }
-    ).exec((err, result) => {
+    ).exec((err, data) => {
         if (err) {
             return res.status(422).json({
                 status: "error",
@@ -132,7 +132,7 @@ exports.follow = (req, res) => {
                     status: "success",
                     status_code: "200",
                     message: "success",
-                    data: { user: result },
+                    data: { userfollow: data, user: result },
                 });
             });
     });
@@ -145,7 +145,7 @@ exports.unfollow = (req, res) => {
             $pull: { followers: req.user._id },
         },
         { new: true }
-    ).exec((err, result) => {
+    ).exec((err, data) => {
         if (err) {
             return res.status(422).json({
                 status: "error",
@@ -174,7 +174,7 @@ exports.unfollow = (req, res) => {
                     status: "success",
                     status_code: "200",
                     message: "success",
-                    data: { user: result },
+                    data: { userfollow: data, user: result },
                 });
             });
     });

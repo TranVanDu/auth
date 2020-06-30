@@ -1,3 +1,7 @@
+a {
+	color: #444;
+}
+
 .profile {
 	max-width: 600px;
 	margin: 0px auto;
@@ -13,8 +17,8 @@
 .profile__header img {
 	border-radius: 50%;
 	position: relative;
-	width: 160px;
-	height: 160px;
+	width: 150px;
+	height: 150px;
 	object-fit: cover;
 	cursor: pointer;
 }
@@ -84,7 +88,7 @@
 }
 
 .gallery__hover {
-	font-size: 18px;
+	font-size: 16px;
 	color: #fff;
 }
 
@@ -102,6 +106,10 @@
 
 .modal__avatar .ant-upload-list-picture-card .ant-upload-list-item-info {
 	border-radius: 50%;
+}
+
+.ant-tag {
+	cursor: pointer;
 }
 
 @media (max-width: 992px) {
@@ -124,8 +132,8 @@
 	}
 
 	.profile__header img {
-		width: 100px;
-		height: 100px;
+		width: 90px;
+		height: 90px;
 	}
 
 	.profile__header--camera {
@@ -161,7 +169,7 @@
 
 @media (max-width: 480px) {
 	.profile__header img {
-		width: 90px;
-		height: 90px;
+		width: 80px;
+		height: 80px;
 	}
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
     getAllPosts,
@@ -135,7 +135,19 @@ const Home = () => {
                                                         marginLeft: "10px",
                                                     }}
                                                 >
-                                                    {item.postedBy.name}
+                                                    <Link
+                                                        to={
+                                                            item.postedBy
+                                                                ._id !==
+                                                            user._id
+                                                                ? "/user/" +
+                                                                  item.postedBy
+                                                                      ._id
+                                                                : "/profile"
+                                                        }
+                                                    >
+                                                        {item.postedBy.name}
+                                                    </Link>
                                                 </span>
                                                 <br />
                                                 <span

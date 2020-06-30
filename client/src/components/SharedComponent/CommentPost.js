@@ -52,20 +52,18 @@ function CommentPost(props) {
     return useMemo(() => {
         const { visible, item, onCancel, flag } = props;
         const like = async (id) => {
-            try {
-                await dispatch(likePost({ postId: id }, flag));
-            } catch (err) {}
+            await dispatch(likePost({ postId: id }, flag));
         };
         const unlike = async (id) => {
-            try {
-                await dispatch(unlikePost({ postId: id }, flag));
-            } catch (err) {}
+            await dispatch(unlikePost({ postId: id }, flag));
         };
         const destroyModal = () => {
             onCancel();
         };
+
         return (
             <Modal
+                className="Modal"
                 visible={visible}
                 onCancel={onCancel}
                 footer={null}
@@ -78,7 +76,11 @@ function CommentPost(props) {
                         title={
                             <div style={{ display: "flex" }}>
                                 <Avatar
-                                    src={item.postedBy.avatar}
+                                    src={
+                                        /^upload/.test(item.postedBy.avatar)
+                                            ? `/${item.postedBy.avatar}`
+                                            : item.postedBy.avatar
+                                    }
                                     size="large"
                                 />
                                 <div
@@ -91,7 +93,15 @@ function CommentPost(props) {
                                             marginLeft: "10px",
                                         }}
                                     >
-                                        {item.postedBy.name}
+                                        <Link
+                                            to={
+                                                user._id === item.postedBy._id
+                                                    ? "/profile"
+                                                    : `/user/${item.postedBy._id}`
+                                            }
+                                        >
+                                            {item.postedBy.name}
+                                        </Link>
                                     </span>
                                     <br />
                                     <span
@@ -218,19 +228,31 @@ function CommentPost(props) {
                         >
                             <div className="Card__comment">
                                 {item.comments.map((comment, index) => {
+                                    let avatar = comment.postedBy.avatar;
+                                    if (/^upload/.test(avatar)) {
+                                        avatar = `/${avatar}`;
+                                    }
                                     return (
                                         <Comment
                                             key={index}
                                             actions={null}
                                             author={
-                                                <Link to="">
+                                                <Link
+                                                    to={
+                                                        user._id ===
+                                                        comment.postedBy._id
+                                                            ? "/profile"
+                                                            : `/user/${comment.postedBy._id}`
+                                                    }
+                                                >
                                                     {comment.postedBy.name}
                                                 </Link>
                                             }
                                             avatar={
                                                 <Avatar
                                                     src={
-                                                        comment.postedBy.avatar
+                                                        // comment.postedBy.avatar
+                                                        avatar
                                                     }
                                                     alt="avatar"
                                                 />
@@ -260,7 +282,7 @@ function CommentPost(props) {
                 )}
             </Modal>
         );
-    }, [props.visible, props.item]);
+    }, [props, dispatch, user._id]);
 }
 export default CommentPost;
 CommentPost.propTypes = {

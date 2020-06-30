@@ -47,7 +47,7 @@ export default function UploadAvatar(props) {
             onCancel={() => props.onCancel()}
             footer={[
                 <Button key="back" onClick={() => props.onCancel()}>
-                    Cancel
+                    Trở lại
                 </Button>,
                 <Button
                     key="submit"
@@ -55,16 +55,16 @@ export default function UploadAvatar(props) {
                     loading={loading}
                     onClick={handleOk}
                 >
-                    Submit
+                    Đồng ý
                 </Button>,
             ]}
         >
             <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div>
-                    <p>Avatar cũ </p>
+                    <p>Avatar hiện tại</p>
                     <img
                         src={props.avatar}
-                        alt="avatar cũ"
+                        alt="avatar hiện tại"
                         style={{
                             width: "104px",
                             height: "104px",
@@ -73,8 +73,11 @@ export default function UploadAvatar(props) {
                         }}
                     />
                 </div>
+                <div
+                    style={{ display: "flex", alignItems: "center" }}
+                >{`=>`}</div>
                 <div className="modal__avatar">
-                    <p>Avatar mới </p>
+                    <p>Avatar thay đổi </p>
                     <UploadFile
                         number={1}
                         onChangeData={onChange}

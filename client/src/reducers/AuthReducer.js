@@ -4,6 +4,8 @@ import {
     GET_AUTH_USER,
     LOGOUT_USER,
     UPDATE_AVATAR,
+    USER_UN_FOLLOW,
+    USER_FOLLOW,
 } from "../actions/types";
 const INIT_STATE = {
     user: {},
@@ -31,6 +33,16 @@ export default function (state = INIT_STATE, action) {
                 ...state,
                 user: action.payload.user,
                 isAuth: action.payload.isAuth,
+            };
+        case USER_FOLLOW:
+            return {
+                ...state,
+                user: action.payload.user,
+            };
+        case USER_UN_FOLLOW:
+            return {
+                ...state,
+                user: action.payload.user,
             };
         case LOGOUT_USER:
             return { user: {}, isAuth: false };

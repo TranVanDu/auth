@@ -32,20 +32,20 @@ form .form__button:focus {
 	padding: 0px 10px;
 }
 
-.Home_Card .ant-modal-wrap {
+.ant-modal-wrap {
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
 
-.Home_Card .ant-modal-body {
-	padding: 7px;
+.Modal .ant-modal-body {
+	padding: 0px;
 }
 
-.Home_Card .Card__comment .ant-comment .ant-comment-inner {
+.Modal .Card__comment .ant-comment .ant-comment-inner {
 	padding: 7px 0px;
 }
 
-.Home_Card .ant-modal-content .ant-modal-close {
+.Modal .ant-modal-content .ant-modal-close {
 	top: -22px;
 	right: -22px;
 }

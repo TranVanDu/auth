@@ -22,3 +22,7 @@ export const GET_MY_POSTS = "GET_MY_POSTS";
 export const UN_LIKE_MY_POST = "UN_LIKE_MY_POST";
 export const COMMENT_MY_POST = "COMMENT_MY_POST";
 export const LIKE_MY_POST = "LIKE_MY_POST";
+//user action
+export const GET_USER = "GET_USER";
+export const USER_FOLLOW = "USER_FOLLOW";
+export const USER_UN_FOLLOW = "USER_UN_FOLLOW";
