@@ -18,6 +18,6 @@ router.get("/user/:id", profileUser);
 router.put("/follow", follow);
 router.put("/unfollow", unfollow);
 router.put("/updateAvatar", upload.single("file"), updateAvatar);
-router.post("/seach-users", searchUser);
+router.get("/search-users", searchUser);
 
 module.exports = router;

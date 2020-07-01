@@ -214,7 +214,8 @@ exports.updateAvatar = (req, res) => {
 };
 
 exports.searchUser = (req, res) => {
-    let userPattern = new RegExp("^" + req.params.query);
+    let userPattern = new RegExp(req.query.name, "gi");
+    console.log(userPattern);
     User.find({ name: { $regex: userPattern } })
         .select("_id name email avatar")
         .then((user) => {
@@ -222,7 +223,7 @@ exports.searchUser = (req, res) => {
                 status: "success",
                 status_code: "200",
                 message: "success",
-                data: { user: user },
+                data: { users: user },
             });
         })
         .catch((err) => {

@@ -30,9 +30,14 @@
 
 .menu__search {
 	padding: 0px 50px 0px 50px;
+	position: relative;
 }
 
 .menu__search .ant-input-search {
+	width: 300px;
+}
+
+.menu__search .ant-select {
 	width: 300px;
 }
 
@@ -124,6 +129,10 @@
 	}
 
 	.menu__search .ant-input-search {
+		width: 200px;
+	}
+
+	.menu__search .ant-select {
 		width: 200px;
 	}
 
