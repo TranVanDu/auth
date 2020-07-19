@@ -39,6 +39,7 @@
 		"nodemon": "^2.0.4"
 	},
 	"engines": {
-		"node": "10.16.0"
+		"node": "10.x",
+		"yarn": "1.x"
 	}
 }
