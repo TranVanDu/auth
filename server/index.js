@@ -45,7 +45,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // support parsing of application/json type post data
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => res.json("👌hello word! Welcom my friend"));
+// app.get("/", (req, res) => res.json("👌hello word! Welcom my friend"));
 app.use("/api", require("./routes/auth"));
 app.use("/api/users", requireLogin, require("./routes/user"));
 app.use("/api/posts", requireLogin, require("./routes/post"));
@@ -54,8 +54,8 @@ app.use("/uploads", express.static("uploads"));
 if (process.env.NODE_ENV === "production") {
     // Set static folder
     // All the javascript and css files will be read and served from this folder
-    app.use(express.static("client/build"));
-
+    app.use(express.static("../client/build"));
+    const path = require("path");
     // index.html for all page routes    html or routing and naviagtion
     app.get("*", (req, res) => {
         res.sendFile(
