@@ -7,8 +7,6 @@ import {
     useHistory,
 } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import NarBar from "./components/screens/Navbar/Navbar";
-import Footer from "./components/screens/Footer/Footer.js";
 import { Spin } from "antd";
 import { Routes } from "./routes/index";
 import { getCookie } from "./helpers/session";
@@ -18,6 +16,8 @@ import { InstagramOutlined } from "@ant-design/icons";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./App.css";
+import NarBar from "./components/screens/Navbar/Navbar";
+import FooterPage from "./components/screens/Footer/FooterPage.js";
 
 const Routing = () => {
     const dispatch = useDispatch();
@@ -80,7 +80,7 @@ function App() {
                     <div className="Content">
                         <Routing />
                     </div>
-                    <Footer />
+                    <FooterPage />
                     <ToastContainer />
                 </Suspense>
             ) : (

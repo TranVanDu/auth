@@ -1,7 +1,7 @@
 import React from "react";
 import { SmileTwoTone } from "@ant-design/icons";
 
-function Footer() {
+function FooterPage() {
     return (
         <div
             style={{
@@ -21,4 +21,4 @@ function Footer() {
     );
 }
 
-export default Footer;
+export default FooterPage;
