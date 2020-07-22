@@ -1,9 +1,10 @@
 import axios from "axios";
 import { getCookie, removeCookie } from "../helpers/session";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../config/index";
 
 const api = axios.create({
-    baseURL: "http://localhost:5000",
+    baseURL: BASE_URL,
     timeout: 15000,
     crossDomain: true,
     headers: {
