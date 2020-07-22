@@ -7,9 +7,8 @@ import {
     useHistory,
 } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import "./App.css";
 import NarBar from "./components/screens/Navbar/Navbar";
-import Footer from "./components/screens/Footer/Footer";
+import Footer from "./components/screens/Footer/Footer.js";
 import { Spin } from "antd";
 import { Routes } from "./routes/index";
 import { getCookie } from "./helpers/session";
