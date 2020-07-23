@@ -32,7 +32,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.status === 401) {
+        if (error.status_code === 401) {
             removeCookie("insta_token");
             toast.error("Phiên đã hết hạn. Vui lòng đăng nhập lại!");
             if (window.location.pathname !== "/login") {
