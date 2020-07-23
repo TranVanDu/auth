@@ -1,5 +1,6 @@
 const cloudinary = require("cloudinary");
 const dotenv = require("dotenv");
+const { reject } = require("lodash");
 
 dotenv.config();
 
@@ -8,28 +9,28 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
+const uniqueFilename = new Date().toISOString();
 exports.uploads = (file, folder) => {
     return new Promise((resolve) => {
-        cloudinary.uploader.upload(
+        cloudinary.v2.uploader.upload(
             file,
-            (result) => {
-                resolve({
-                    url: result.eager[1].url,
-                    pic_id: result.public_id,
-                });
-            },
-
             {
+                resource_type: "auto",
+                folder: folder,
+                use_filename: true,
                 eager: [
                     { width: 600, height: 500, crop: "thumb" },
                     { width: 600, height: 500, crop: "fill" },
                 ],
             },
-
-            {
-                resource_type: "auto",
-                folder: folder,
+            function (err, result) {
+                if (err) {
+                    reject(err);
+                }
+                resolve({
+                    url: result.eager[1].url,
+                    pic_id: result.public_id,
+                });
             }
         );
     });

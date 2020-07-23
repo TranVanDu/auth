@@ -36,8 +36,6 @@ export default function Profile() {
                 }
             } catch (err) {
                 setIsLoading(false);
-
-                window.location.reload();
             }
         };
         fecthPost();

@@ -18,6 +18,7 @@ api.interceptors.request.use(
     function (config) {
         let accessToken = getCookie("insta_token");
         // Do something before request is sent
+
         if (accessToken) {
             config.headers.common["Authorization"] = "Bearer " + accessToken;
         }
@@ -30,9 +31,20 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        return response;
+    },
     (error) => {
-        if (error.status_code === 401) {
+        if (error.response.status === 401) {
+            removeCookie("insta_token");
+            toast.error("Phiên đã hết hạn. Vui lòng đăng nhập lại!");
+            if (window.location.pathname !== "/login") {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }
+        }
+        if (error.status === 401) {
             removeCookie("insta_token");
             toast.error("Phiên đã hết hạn. Vui lòng đăng nhập lại!");
             if (window.location.pathname !== "/login") {

@@ -47,7 +47,7 @@ module.exports.createPost = async (req, res) => {
     try {
         const body = req.body.body === "undefined" ? "" : req.body.body;
         const uploader = async (path) =>
-            await cloudinary.uploads(path, "Home/Images");
+            await cloudinary.uploads(path, "Images");
         const urls = [];
         const files = req.files;
         for (const file of files) {
@@ -79,7 +79,7 @@ module.exports.createPost = async (req, res) => {
         return res.status(422).json({
             status: "error",
             status_code: "422",
-            message: err,
+            message: error,
         });
     }
 };

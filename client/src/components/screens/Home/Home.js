@@ -73,9 +73,6 @@ const Home = () => {
                 }
             } catch (err) {
                 setIsLoading(false);
-                if (err.data.message === "You must be logged in") {
-                    window.location.reload();
-                }
             }
         };
         fecthData();
