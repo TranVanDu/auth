@@ -47,7 +47,7 @@ module.exports.createPost = async (req, res) => {
     try {
         const body = req.body.body === "undefined" ? "" : req.body.body;
         const uploader = async (path) =>
-            await cloudinary.uploads(path, "Images");
+            await cloudinary.uploads(path, "Home/Images");
         const urls = [];
         const files = req.files;
         for (const file of files) {
