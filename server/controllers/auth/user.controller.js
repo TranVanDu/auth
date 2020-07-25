@@ -186,7 +186,10 @@ exports.updateAvatar = async (req, res) => {
     try {
         const file = req.file.path;
         const { avatar } = req.user;
-        // fs.unlinkSync(avatar);
+        if (/^uploads/.test(avatar)) {
+            fs.unlinkSync(avatar);
+        }
+
         let user = await User.findByIdAndUpdate(
             req.user._id,
             {
