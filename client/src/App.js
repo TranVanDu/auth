@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState, useRef } from "react";
 import { ToastContainer } from "react-toastify";
 import {
     BrowserRouter as Router,
@@ -20,6 +20,7 @@ import NarBar from "./components/screens/Navbar/Navbar";
 import FooterPage from "./components/screens/Footer/FooterPage.js";
 
 const Routing = () => {
+    const _isMounted = useRef(true);
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
     // const [isLoading, setIsLoading] = useState(true);
@@ -31,30 +32,39 @@ const Routing = () => {
                 history.push("/");
             } else {
                 dispatch(getAuthUser()).then((res) => {
-                    if (!res) {
-                        history.push("/login");
-                    } else {
-                        if (history.location.pathname !== "/") {
-                            history.push("/");
+                    if (_isMounted.current) {
+                        if (!res) {
+                            history.push("/login");
+                        } else {
+                            if (history.location.pathname !== "/") {
+                                history.push("/");
+                            }
                         }
                     }
                 });
             }
         } else {
-            if (history.location.pathname !== "/login") history.push("/login");
+            if (_isMounted.current) {
+                if (history.location.pathname !== "/login")
+                    history.push("/login");
+            }
         }
+        return () => {
+            _isMounted.current = false;
+        };
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <Switch>
-            {Routes.map((item, index) => (
-                <Route
-                    key={index}
-                    exact={item.exact}
-                    path={item.path}
-                    render={(props) => <item.component {...props} />}
-                />
-            ))}
+            {_isMounted.current &&
+                Routes.map((item, index) => (
+                    <Route
+                        key={index}
+                        exact={item.exact}
+                        path={item.path}
+                        render={(props) => <item.component {...props} />}
+                    />
+                ))}
             {/* <Route exact path="/" component={Home} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} /> */}

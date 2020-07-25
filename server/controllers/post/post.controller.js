@@ -1,4 +1,5 @@
 const Post = require("../../models/post");
+const Comment = require("../../models/comment");
 const upload = require("../../helper/multer");
 const fs = require("fs");
 const mongoose = require("mongoose");
@@ -184,6 +185,7 @@ module.exports.commentPost = (req, res) => {
     const comment = {
         text: req.body.text,
         postedBy: req.user._id,
+        date: Date.now(),
     };
 
     Post.findByIdAndUpdate(

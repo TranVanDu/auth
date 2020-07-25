@@ -33,7 +33,8 @@ form .form__button:focus {
 }
 
 .ant-modal-wrap {
-	overflow-x: hidden;
+	overflow: hidden !important;
+	overflow-x: hidden !important;
 	overflow-y: scroll;
 }
 

@@ -29,7 +29,9 @@ export const getAllPosts = (filter) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error(err.response.data.message);
+                if (err.response.data.status_code !== 401) {
+                    toast.error(err.response.data.message);
+                }
                 reject(err.response);
             });
     });
@@ -45,7 +47,10 @@ export const getPost = (id) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error(err.response.data.message);
+                if (err.response.data.status_code !== 401) {
+                    toast.error(err.response.data.message);
+                }
+
                 reject(err.response);
             });
     });
@@ -62,7 +67,10 @@ export const createPost = (data, headers) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error(err.response.data.message);
+                if (err.response.data.status_code !== 401) {
+                    toast.error(err.response.data.message);
+                }
+                // toast.error(err.response.data.message);
                 reject(err);
             });
     });
@@ -78,7 +86,10 @@ export const deletePost = (id) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error("Đã có lỗi xảy ra");
+                if (err.response.data.status_code !== 401) {
+                    toast.error("Đã có lỗi xảy ra");
+                }
+                // toast.error("Đã có lỗi xảy ra");
                 reject(err);
             });
     });
@@ -93,7 +104,10 @@ export const getSubPost = (filter) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error("Đã có lỗi xảy ra");
+                if (err.response.data.status_code !== 401) {
+                    toast.error("Đã có lỗi xảy ra");
+                }
+                // toast.error("Đã có lỗi xảy ra");
                 reject(err.response);
             });
     });
@@ -115,7 +129,10 @@ export const likePost = (data, flag) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error("Đã có lỗi xảy ra");
+                if (err.response.data.status_code !== 401) {
+                    toast.error("Đã có lỗi xảy ra");
+                }
+                // toast.error("Đã có lỗi xảy ra");
                 reject(err);
             });
     });
@@ -140,7 +157,10 @@ export const unlikePost = (data, flag) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error("Đã có lỗi xảy ra");
+                if (err.response.data.status_code !== 401) {
+                    toast.error("Đã có lỗi xảy ra");
+                }
+                // toast.error("Đã có lỗi xảy ra");
                 reject(err);
             });
     });
@@ -167,7 +187,10 @@ export const commentPost = (data, flag) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error("Đã có lỗi xảy ra");
+                if (err.response.data.status_code !== 401) {
+                    toast.error("Đã có lỗi xảy ra");
+                }
+                // toast.error("Đã có lỗi xảy ra");
                 reject(err);
             });
     });
@@ -186,7 +209,10 @@ export const getMyPosts = (filter) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error("Đã có lỗi xảy ra");
+                if (err.response.data.status_code !== 401) {
+                    toast.error("Đã có lỗi xảy ra");
+                }
+                // toast.error("Đã có lỗi xảy ra");
                 reject(err.response);
             });
     });

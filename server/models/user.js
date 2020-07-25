@@ -10,6 +10,7 @@ const userSchema = mongoose.Schema(
         },
         email: {
             type: String,
+            match: /^\S+@\S+\.\S+$/,
             trim: true,
             lowercase: true,
             unique: true,
@@ -30,10 +31,11 @@ const userSchema = mongoose.Schema(
         avatar: {
             type: String,
             default:
-                "https://media-a.laodong.vn/Storage/NewsPortal/2020/3/12/790444/Irene.jpg",
+                "https://res.cloudinary.com/clonedata/image/upload/v1595495560/avatars/Irene_kowuad.jpg",
         },
         sex: {
             type: String,
+            enaum: ["male", "female"],
             default: "male",
         },
         password: {
@@ -51,6 +53,19 @@ const userSchema = mongoose.Schema(
                 ref: "User",
             },
         ],
+        //0: admin, 1:user
+        role: {
+            type: String,
+            enum: [0, 1],
+            default: 1,
+        },
+        birthday: {
+            type: Date,
+        },
+        services: {
+            facebook: { type: String },
+            google: { type: String },
+        },
     },
     { timestamps: true }
 );

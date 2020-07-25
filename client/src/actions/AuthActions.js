@@ -59,7 +59,9 @@ export const loginFacebook = (data) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error("Đã có lỗi xảy ra");
+                if (err.response.data.status_code !== 401) {
+                    toast.error("Đã có lỗi xảy ra");
+                }
                 reject(err);
             });
     });
@@ -76,7 +78,10 @@ export const loginGoogle = (data) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                toast.error("Đã có lỗi xảy ra");
+                if (err.response.data.status_code !== 401) {
+                    toast.error("Đã có lỗi xảy ra");
+                }
+
                 reject(err);
             });
     });

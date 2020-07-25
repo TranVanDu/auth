@@ -32,7 +32,10 @@ export const follow = (data) => (dispatch) => {
             })
             .catch((err) => {
                 console.log(err);
-                toast("Đã có lỗi");
+                if (err.response.data.status_code !== 401) {
+                    toast.error("Đã có lỗi xảy ra");
+                }
+                // toast("Đã có lỗi");
                 reject(err);
             });
     });
@@ -51,7 +54,10 @@ export const unfollow = (data) => (dispatch) => {
             })
             .catch((err) => {
                 console.log(err);
-                toast("Đã có lỗi");
+                if (err.response.data.status_code !== 401) {
+                    toast.error("Đã có lỗi xảy ra");
+                }
+                // toast("Đã có lỗi");
                 reject(err);
             });
     });

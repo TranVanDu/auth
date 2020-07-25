@@ -96,7 +96,7 @@ a {
 	opacity: 1;
 }
 
-.modal__avatar .ant-upload-select-picture-card {
+.modal__avatar .ant-upload.ant-upload-select-picture-card {
 	border-radius: 50%;
 }
 

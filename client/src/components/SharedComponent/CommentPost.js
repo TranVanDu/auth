@@ -4,6 +4,7 @@ import { Modal, Card, Avatar, Comment, Tooltip, Divider } from "antd";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import Slider from "react-slick";
+import "./Comment.css";
 import {
     LeftOutlined,
     RightOutlined,

@@ -19,6 +19,7 @@ const postSchema = new mongoose.Schema(
                 postedBy: { type: ObjectId, ref: "User" },
                 date: { type: Date, default: Date.now() },
             },
+            // { type: ObjectId, ref: "Comment" },
         ],
         likes: [
             {
@@ -32,7 +33,7 @@ const postSchema = new mongoose.Schema(
         },
         updated: {
             type: Date,
-            default: Date.now,
+            default: Date.now(),
         },
     },
     { timestamps: true }

@@ -1,6 +1,8 @@
 const User = require("../../models/user");
 const Post = require("../../models/post");
 const fs = require("fs");
+const bcrypt = require("bcrypt");
+const salt = 12;
 
 exports.isAuth = (req, res) => {
     if (req.user) {
@@ -233,4 +235,92 @@ exports.searchUser = (req, res) => {
                 message: err,
             });
         });
+};
+
+exports.updateProfile = async (req, res) => {
+    let data = req.body;
+    try {
+        if (req.user) {
+            if (data.email || data.password || data.role || data.avatar) {
+                delete data.email;
+                delete data.password;
+                delete data.role;
+                delete data.avatar;
+            }
+
+            let user = await User.findByIdAndUpdate(req.user._id, data, {
+                new: true,
+            }).select("-password");
+
+            res.json({
+                status: "success",
+                status_code: 200,
+                message: "update success",
+                data: { user },
+            });
+        } else {
+            return res.status(401).json({
+                status: "error",
+                status_code: 401,
+                message: "You must be login",
+            });
+        }
+    } catch (error) {
+        return res
+            .status(422)
+            .json({ status: "error", status_code: 422, message: error });
+    }
+};
+
+exports.changePassword = async (req, res) => {
+    let { old_password, new_password } = req.body;
+    try {
+        if (req.user) {
+            let user = await User.findOne({ _id: req.user._id });
+
+            bcrypt.compare(old_password, user.password).then((domatch) => {
+                if (domatch) {
+                    bcrypt.hash(new_password, salt).then((hashPassword) => {
+                        User.findByIdAndUpdate(
+                            req.user._id,
+                            { $set: { password: hashPassword } },
+                            { new: true }
+                        )
+                            .select("-password")
+                            .then((result) => {
+                                res.json({
+                                    status: "success",
+                                    status_code: 200,
+                                    message: "Change password success",
+                                    data: { user: result },
+                                });
+                            })
+                            .catch((err) => {
+                                return res.status(422).json({
+                                    status: "error",
+                                    status_code: 422,
+                                    message: err,
+                                });
+                            });
+                    });
+                } else {
+                    return res.status(422).json({
+                        status: "error",
+                        status_code: 422,
+                        message: "Old password not match",
+                    });
+                }
+            });
+        } else {
+            return res.status(401).json({
+                status: "error",
+                status_code: 401,
+                message: "You must be login",
+            });
+        }
+    } catch (error) {
+        return res
+            .status(422)
+            .json({ status: "error", status_code: 422, message: error });
+    }
 };
