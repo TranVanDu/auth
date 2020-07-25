@@ -186,9 +186,13 @@ exports.updateAvatar = async (req, res) => {
     try {
         const file = req.file.path;
         const { avatar } = req.user;
-        if (/^uploads/.test(avatar)) {
-            fs.unlinkSync(avatar);
-        }
+        fs.access(avatar, (err) => {
+            if (err) {
+                console.log("The file does not exist.");
+            } else {
+                fs.unlinkSync(avatar);
+            }
+        });
 
         let user = await User.findByIdAndUpdate(
             req.user._id,
