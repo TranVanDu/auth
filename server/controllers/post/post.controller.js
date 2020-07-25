@@ -53,9 +53,10 @@ module.exports.createPost = async (req, res) => {
         const files = req.files;
         for (const file of files) {
             const { path } = file;
-            const newPath = await uploader(path.split(/[\\\/]/).join("/"));
+            //const newPath = await uploader(path.split(/[\\\/]/).join("/"));
+            const newPath = await uploader(path);
             urls.push(newPath);
-            fs.unlinkSync(path.split(/[\\\/]/).join("\\"));
+            fs.unlinkSync(path);
         }
         let user = JSON.parse(JSON.stringify(req.user));
         delete user.password;
