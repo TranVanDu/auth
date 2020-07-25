@@ -184,8 +184,9 @@ exports.unfollow = (req, res) => {
 
 exports.updateAvatar = (req, res) => {
     const file = req.file.path;
-    if (/^upload/.test(req.user.avatar)) {
-        fs.unlinkSync(req.user.avatar);
+    const { avatar } = req.user;
+    if (/^uploads/.test(avatar)) {
+        fs.unlinkSync(avatar);
     }
     User.findByIdAndUpdate(
         req.user._id,
