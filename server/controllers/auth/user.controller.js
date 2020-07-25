@@ -182,38 +182,46 @@ exports.unfollow = (req, res) => {
     });
 };
 
-exports.updateAvatar = (req, res) => {
-    const file = req.file.path;
-    const { avatar } = req.user;
-    if (/^uploads/.test(avatar)) {
-        fs.unlinkSync(avatar);
-    }
-    User.findByIdAndUpdate(
-        req.user._id,
-        {
-            $set: { avatar: file },
-        },
-        { new: true }
-    )
-        .select("-password")
-        .exec((err, result) => {
-            if (err) {
-                return res.status(422).json({
-                    status: "error",
-                    status_code: 422,
-                    message: err,
-                });
-            }
-            res.status(200).json({
-                status: "success",
-                status_code: "200",
-                message: "success",
-                data: {
-                    user: result,
-                    isAuth: true,
-                },
+exports.updateAvatar = async (req, res) => {
+    try {
+        const file = req.file.path;
+        const { avatar } = req.user;
+        if (/^uploads/.test(avatar)) {
+            fs.unlink(avatar, function (err) {
+                if (err) {
+                    return res.status(422).json({
+                        status: "error",
+                        status_code: 422,
+                        message: error,
+                    });
+                }
+                console.log("file deleted successfully");
             });
+        }
+        let user = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $set: { avatar: file },
+            },
+            { new: true }
+        ).select("-password");
+
+        res.status(200).json({
+            status: "success",
+            status_code: "200",
+            message: "success",
+            data: {
+                user,
+                isAuth: true,
+            },
         });
+    } catch (error) {
+        return res.status(422).json({
+            status: "error",
+            status_code: 422,
+            message: error,
+        });
+    }
 };
 
 exports.searchUser = (req, res) => {
