@@ -186,7 +186,7 @@ exports.updateAvatar = async (req, res) => {
     try {
         const file = req.file.path;
         const { avatar } = req.user;
-        fs.access(avatar, (err) => {
+        fs.stat(avatar, (err) => {
             if (err) {
                 console.log("The file does not exist.");
             } else {
