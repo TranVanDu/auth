@@ -186,18 +186,8 @@ exports.updateAvatar = async (req, res) => {
     try {
         const file = req.file.path;
         const { avatar } = req.user;
-        if (/^uploads/.test(avatar)) {
-            fs.unlink(avatar, function (err) {
-                if (err) {
-                    return res.status(422).json({
-                        status: "error",
-                        status_code: 422,
-                        message: error,
-                    });
-                }
-                console.log("file deleted successfully");
-            });
-        }
+
+        fs.unlinkSync(avatar);
         let user = await User.findByIdAndUpdate(
             req.user._id,
             {
