@@ -90,6 +90,7 @@ export default function Profile() {
                                                 onClick={() =>
                                                     onFollow(profile.user._id)
                                                 }
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 Follow
                                             </Tag>
@@ -99,6 +100,7 @@ export default function Profile() {
                                                 onClick={() =>
                                                     onUnFollow(profile.user._id)
                                                 }
+                                                style={{ cursor: "pointer" }}
                                             >
                                                 unFollow
                                             </Tag>

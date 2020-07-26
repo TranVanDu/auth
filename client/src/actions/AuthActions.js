@@ -4,6 +4,8 @@ import {
     GET_AUTH_USER,
     LOGOUT_USER,
     UPDATE_AVATAR,
+    UPDATE_PROFILE,
+    CHANGE_PASSWORD,
 } from "./types";
 import api from "../api";
 import { API_URL } from "../config/index";
@@ -124,6 +126,52 @@ export const updateAvatar = (data, headers) => (dispatch) => {
             .catch((err) => {
                 console.log("error", err);
                 toast.error(err.response.data.message);
+                reject(err);
+            });
+    });
+};
+
+export const updateProfile = (data) => (dispatch) => {
+    return new Promise((reslove, reject) => {
+        return api
+            .put(`${API_URL}/users/update-profile`, data)
+            .then((res) => {
+                dispatch({
+                    type: UPDATE_PROFILE,
+                    payload: res.data.data,
+                });
+                toast.success("Cập nhật profile thành công");
+                reslove(res.data.data);
+            })
+            .catch((err) => {
+                console.log(err);
+                if (err.response.data.status_code !== 401) {
+                    toast.error(err.response.data.message);
+                }
+                // toast("Đã có lỗi");
+                reject(err);
+            });
+    });
+};
+
+export const changePassword = (data) => (dispatch) => {
+    return new Promise((reslove, reject) => {
+        return api
+            .put(`${API_URL}/users/change-password`, data)
+            .then((res) => {
+                dispatch({
+                    type: CHANGE_PASSWORD,
+                    payload: res.data.data,
+                });
+                toast.success("Thay đổi password thành công");
+                reslove(res.data.data);
+            })
+            .catch((err) => {
+                console.log(err);
+                if (err.response.data.status_code !== 401) {
+                    toast.error(err.response.data.message);
+                }
+                // toast("Đã có lỗi");
                 reject(err);
             });
     });

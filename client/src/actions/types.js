@@ -26,3 +26,5 @@ export const LIKE_MY_POST = "LIKE_MY_POST";
 export const GET_USER = "GET_USER";
 export const USER_FOLLOW = "USER_FOLLOW";
 export const USER_UN_FOLLOW = "USER_UN_FOLLOW";
+export const UPDATE_PROFILE = "UPDATE_PROFILE";
+export const CHANGE_PASSWORD = "CHANGE_PASSWORD";

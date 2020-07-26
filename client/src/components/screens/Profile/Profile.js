@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Spin, Divider, Empty } from "antd";
 import { getMyPosts, getPost } from "../../../actions/PostActions";
-import { CameraOutlined } from "@ant-design/icons";
+import { CameraOutlined, SettingTwoTone } from "@ant-design/icons";
 import Carousel, { Modal, ModalGateway } from "react-images";
 import CommentPost from "../../SharedComponent/CommentPost";
 import Gallery from "./Gallery";
 import UploadAvatar from "./UploadAvatar";
+import Setting from "./Setting";
 import _ from "lodash";
 import "./Profile.css";
 
@@ -17,6 +18,7 @@ export default function Profile() {
     const myPosts = useSelector((state) => state.post.myPosts);
     const [visible, setVibisle] = useState(false);
     const [onChange, setOnChange] = useState(false);
+    const [onSetting, setOnSetting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -77,7 +79,17 @@ export default function Profile() {
                                 />
                             </div>
                             <div className="profile__header--user">
-                                <div>{user.name}</div>
+                                <div>
+                                    {user.name}
+                                    <SettingTwoTone
+                                        twoToneColor="#c41717"
+                                        style={{
+                                            paddingLeft: "7px",
+                                            cursor: "pointer",
+                                        }}
+                                        onClick={() => setOnSetting(true)}
+                                    />
+                                </div>
                                 <div>{user.email}</div>
                                 <div className="header--description">
                                     <div>
@@ -104,6 +116,10 @@ export default function Profile() {
                                 visible={onChange}
                                 onCancel={handleCancel}
                                 avatar={user.avatar}
+                            />
+                            <Setting
+                                visible={onSetting}
+                                onClose={() => setOnSetting(false)}
                             />
                             <ModalGateway>
                                 {modalIsOpen ? (

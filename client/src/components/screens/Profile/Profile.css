@@ -28,7 +28,7 @@ a {
 	border: 5px solid #fff;
 	border-radius: 50%;
 	background: #fff;
-	color: crimson;
+	color: crimson !important;
 	position: absolute;
 	bottom: 5px;
 	right: 10px;
