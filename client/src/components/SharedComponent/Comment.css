@@ -33,9 +33,9 @@ form .form__button:focus {
 }
 
 .ant-modal-wrap {
-	overflow: hidden !important;
+
 	overflow-x: hidden !important;
-	overflow-y: scroll;
+	overflow-y: scroll !important;
 }
 
 .Modal .ant-modal-body {

@@ -92,6 +92,7 @@ export default function Setting(props) {
             </Modal>
             <Modal
                 visible={profile}
+                style={{ top: 15 }}
                 title={
                     update ? (
                         <div>
