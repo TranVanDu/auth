@@ -281,27 +281,29 @@ export default function Login(props) {
                                             </Button>,
                                         ]}
                                     >
-                                        <Form form={form}>
-                                            <Form.Item
-                                                name="email"
-                                                label="Email"
-                                                hasFeedback
-                                                rules={[
-                                                    {
-                                                        type: "email",
-                                                        message:
-                                                            "Email không hợp lệ",
-                                                    },
-                                                    {
-                                                        required: true,
-                                                        message:
-                                                            "Email is require",
-                                                    },
-                                                ]}
-                                            >
-                                                <Input />
-                                            </Form.Item>
-                                        </Form>
+                                        {text == "" && (
+                                            <Form form={form}>
+                                                <Form.Item
+                                                    name="email"
+                                                    label="Email"
+                                                    hasFeedback
+                                                    rules={[
+                                                        {
+                                                            type: "email",
+                                                            message:
+                                                                "Email không hợp lệ",
+                                                        },
+                                                        {
+                                                            required: true,
+                                                            message:
+                                                                "Email is require",
+                                                        },
+                                                    ]}
+                                                >
+                                                    <Input />
+                                                </Form.Item>
+                                            </Form>
+                                        )}
                                         {text !== "" && (
                                             <div>
                                                 <label
