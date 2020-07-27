@@ -79,6 +79,7 @@ export default function Login(props) {
                             form.resetFields();
                         }, 3000);
                     } else {
+                        setLoading(false);
                         toast.error(result.message.message);
                     }
                 })
@@ -281,7 +282,7 @@ export default function Login(props) {
                                             </Button>,
                                         ]}
                                     >
-                                        {text == "" && (
+                                        {text === "" && (
                                             <Form form={form}>
                                                 <Form.Item
                                                     name="email"
