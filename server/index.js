@@ -7,24 +7,25 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const PORT = process.env.PORT || 5000;
 const requireLogin = require("./middleware/requireLogin");
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
 const { MONGO_URI } = require("./config/key");
 
 //connect mongo
-mongoose.connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-});
+// mongoose.connect(MONGO_URI, {
+//     useNewUrlParser: true,
+//     useFindAndModify: false,
+//     useUnifiedTopology: true,
+//     useCreateIndex: true,
+// });
 //sử dụng socket.io
-/* 
+
 const connect = mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
     useFindAndModify: false,
     useUnifiedTopology: true,
     useCreateIndex: true,
 });
-*/
 
 mongoose.connection.on("connected", () => {
     console.log("connected to mongo success");
@@ -51,6 +52,10 @@ app.use("/api", require("./routes/mail"));
 app.use("/api/users", requireLogin, require("./routes/user"));
 app.use("/api/posts", requireLogin, require("./routes/post"));
 app.use("/uploads", express.static("uploads"));
+
+io.on("connect", (socket) => {
+    console.log("connect");
+});
 // Serve static assets if in production
 if (process.env.NODE_ENV === "production") {
     // Set static folder

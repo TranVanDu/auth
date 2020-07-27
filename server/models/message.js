@@ -12,6 +12,7 @@ const messageSchema = new mongoose.Schema(
         receiver: {
             type: ObjectId,
             required: true,
+            refPath: "conversationType",
         },
         conversationType: {
             type: String,

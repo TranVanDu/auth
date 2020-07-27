@@ -1,4 +1,5 @@
-const CLIENT_ORIGIN = "http://localhost:3000";
+// const CLIENT_ORIGIN = "http://localhost:3000";
+const CLIENT_ORIGIN = "https://auth-chat.herokuapp.com";
 module.exports = {
     confirm: (id) => ({
         subject: "React Confirm Email",

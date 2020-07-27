@@ -71,12 +71,16 @@ export default function Login(props) {
             })
                 .then((res) => res.json())
                 .then((result) => {
-                    setText(result.message);
-                    setLoading(false);
-                    setTimeout(() => {
-                        setShow(false);
-                        form.resetFields();
-                    }, 3000);
+                    if (result.status_code === 200) {
+                        setText(result.message);
+                        setLoading(false);
+                        setTimeout(() => {
+                            setShow(false);
+                            form.resetFields();
+                        }, 3000);
+                    } else {
+                        toast.error(result.message.message);
+                    }
                 })
                 .catch((err) => {
                     setLoading(false);

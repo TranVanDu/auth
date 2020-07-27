@@ -45,6 +45,7 @@ const Routing = () => {
             }
         } else {
             if (_isMounted.current) {
+                /*eslint-disable eqeqeq*/
                 if (
                     history.location.pathname == "/login" ||
                     /confirm-password/.test(history.location.pathname)
