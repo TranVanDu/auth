@@ -6,6 +6,7 @@ import NotFound from "../components/screens/NotFound/NotFound";
 import MyFollowingPost from "../components/screens/MyFollowingPost/MyFollowingPost";
 import Profile from "../components/screens/Profile/Profile";
 import UserProfile from "../components/screens/UserProfile/UserProfile";
+import Forgot from "../components/screens/ForgotPassword/index";
 export const Routes = [
     {
         path: "/",
@@ -37,6 +38,11 @@ export const Routes = [
         path: "/profile",
         exact: true,
         component: Profile,
+    },
+    {
+        path: "/confirm-password/:token",
+        exact: true,
+        component: Forgot,
     },
     {
         path: "/user/:userId",

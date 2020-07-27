@@ -9,4 +9,16 @@ module.exports = {
     `,
         text: `Copy and paste this link: ${CLIENT_ORIGIN}/confirm/${id}`,
     }),
+    resetPassword: (token) => ({
+        subject: "React forgot password Email",
+        html: `
+		<div>
+			<h2>Hi, some one request that the password for account be reset</h2>
+			<a href='${CLIENT_ORIGIN}/confirm-password/${token}'>
+				click to change password
+			</a>
+		</div>
+    `,
+        text: `Copy and paste this link: $${CLIENT_ORIGIN}/confirm-password/${token}`,
+    }),
 };

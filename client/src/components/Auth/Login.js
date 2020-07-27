@@ -4,9 +4,10 @@ import { useDispatch } from "react-redux";
 import { useHistory, Link } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import FacebookLogin from "react-facebook-login";
-import { Button } from "antd";
+import { Button, Modal, Input, Form } from "antd";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
 import {
     loginFacebook,
     loginGoogle,
@@ -19,9 +20,20 @@ export default function Login(props) {
     // const user = useSelector((state) => state.user);
     const [formErrorMessage, setFormErrorMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [show, setShow] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [text, setText] = useState("");
+    const [form] = Form.useForm();
     const dispatch = useDispatch();
     const mounted = useRef(false);
     // let isMounted = true;
+
+    useEffect(() => {
+        mounted.current = true;
+        return () => {
+            mounted.current = false;
+        };
+    }, []);
     const responseFacebook = async (response) => {
         if (response.userID) {
             const data = {
@@ -47,12 +59,32 @@ export default function Login(props) {
         }
     };
 
-    useEffect(() => {
-        mounted.current = true;
-        return () => {
-            mounted.current = false;
-        };
-    }, []);
+    const onOK = () => {
+        setLoading(true);
+        form.validateFields().then((values) => {
+            fetch(`/api/forgot-password`, {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(values),
+            })
+                .then((res) => res.json())
+                .then((result) => {
+                    setText(result.message);
+                    setLoading(false);
+                    setTimeout(() => {
+                        setShow(false);
+                        form.resetFields();
+                    }, 3000);
+                })
+                .catch((err) => {
+                    setLoading(false);
+                    toast.error(err);
+                });
+        });
+    };
+
     return (
         <div className="container ">
             <div className="form-container sign-in-container">
@@ -218,9 +250,76 @@ export default function Login(props) {
                                             letterSpacing: "0px",
                                             textTransform: "lowercase",
                                         }}
+                                        onClick={() => {
+                                            setShow(true);
+                                        }}
                                     >
                                         forget a password?
                                     </Button>
+                                    <Modal
+                                        visible={show}
+                                        title="Forget a password"
+                                        onCancel={() => setShow(false)}
+                                        footer={[
+                                            <Button
+                                                key="back"
+                                                onClick={() => setShow(false)}
+                                            >
+                                                Cancel
+                                            </Button>,
+                                            <Button
+                                                key="submit"
+                                                loading={loading}
+                                                type="primary"
+                                                onClick={onOK}
+                                            >
+                                                Submit
+                                            </Button>,
+                                        ]}
+                                    >
+                                        <Form form={form}>
+                                            <Form.Item
+                                                name="email"
+                                                label="Email"
+                                                hasFeedback
+                                                rules={[
+                                                    {
+                                                        type: "email",
+                                                        message:
+                                                            "Email không hợp lệ",
+                                                    },
+                                                    {
+                                                        required: true,
+                                                        message:
+                                                            "Email is require",
+                                                    },
+                                                ]}
+                                            >
+                                                <Input />
+                                            </Form.Item>
+                                        </Form>
+                                        {text !== "" && (
+                                            <div>
+                                                <label
+                                                    style={{ width: "100%" }}
+                                                >
+                                                    <p
+                                                        style={{
+                                                            color:
+                                                                "rgba(49, 108, 184, 0.75)",
+                                                            fontSize: "0.7rem",
+                                                            border: "1px solid",
+                                                            padding: "1rem",
+                                                            borderRadius:
+                                                                "10px",
+                                                        }}
+                                                    >
+                                                        {text}
+                                                    </p>
+                                                </label>
+                                            </div>
+                                        )}
+                                    </Modal>
                                 </div>
                                 <button type="submit">
                                     {isLoading && (

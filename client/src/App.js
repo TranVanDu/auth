@@ -45,8 +45,14 @@ const Routing = () => {
             }
         } else {
             if (_isMounted.current) {
-                if (history.location.pathname !== "/login")
+                if (
+                    history.location.pathname == "/login" ||
+                    /confirm-password/.test(history.location.pathname)
+                ) {
+                    history.push(`${history.location.pathname}`);
+                } else {
                     history.push("/login");
+                }
             }
         }
         return () => {

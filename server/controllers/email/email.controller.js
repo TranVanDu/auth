@@ -2,6 +2,9 @@ const User = require("../../models/user");
 const { sendEmail } = require("./email.send");
 const msgs = require("./email.msgs");
 const templates = require("./email.templates");
+const jwt = require("jsonwebtoken");
+const { JWT_KEY } = require("../../config/key");
+const bcrypt = require("bcrypt");
 // The callback that is invoked when the user submits the form on the client.
 exports.collectEmail = (req, res) => {
     const { email } = req.body;
@@ -63,4 +66,83 @@ exports.confirmEmail = (req, res) => {
             }
         })
         .catch((err) => console.log(err));
+};
+
+exports.forgotPassword = (req, res) => {
+    const { email } = req.body;
+    User.findOne({ email: email })
+        .exec()
+        .then((result) => {
+            let token = jwt.sign({ email: email }, JWT_KEY, {
+                expiresIn: 60 * 5,
+            });
+
+            sendEmail(email, templates.resetPassword(token))
+                .then(() => {
+                    res.json({
+                        status: "success",
+                        status_code: 200,
+                        message: msgs.forgotPassword,
+                        token,
+                    });
+                })
+                .catch((err) => {
+                    return res.status(404).json({
+                        status: "error",
+                        status_code: 404,
+                        message: err,
+                    });
+                });
+        })
+        .catch((err) => {
+            return res
+                .status(404)
+                .json({ status: "error", status_code: 404, message: err });
+        });
+};
+
+exports.confirmPassword = (req, res) => {
+    const { password, token } = req.body;
+    jwt.verify(token, JWT_KEY, (err, payload) => {
+        if (err) {
+            return res.status(404).json({
+                status: "error",
+                status_code: 404,
+                message: err,
+            });
+        }
+        const { email } = payload;
+        bcrypt
+            .hash(password, 12)
+            .then((hassPassword) => {
+                console.log(hassPassword);
+                User.findOneAndUpdate(
+                    { email },
+                    { $set: { password: hassPassword } },
+                    { new: true }
+                )
+                    .exec()
+                    .then((result) => {
+                        res.json({
+                            status: "success",
+                            status_code: 200,
+                            message: "Change password success",
+                        });
+                    })
+                    .catch((err) => {
+                        return res.status(422).json({
+                            status: "error",
+                            status_code: 422,
+                            message: err,
+                        });
+                    });
+            })
+            .catch((err) => {
+                return res.status(422).json({
+                    status: "error",
+                    status_code: 422,
+                    message: err,
+                });
+            });
+    });
 };

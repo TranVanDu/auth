@@ -47,6 +47,7 @@ app.use(bodyParser.json());
 
 // app.get("/", (req, res) => res.json("👌hello word! Welcom my friend"));
 app.use("/api", require("./routes/auth"));
+app.use("/api", require("./routes/mail"));
 app.use("/api/users", requireLogin, require("./routes/user"));
 app.use("/api/posts", requireLogin, require("./routes/post"));
 app.use("/uploads", express.static("uploads"));
