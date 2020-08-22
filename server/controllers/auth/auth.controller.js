@@ -77,7 +77,7 @@ exports.login = (req, res) => {
                     return res.status(422).json({
                         status: "error",
                         status_code: 422,
-                        message: "Invalid Eamil or Password",
+                        message: "Invalid Email or Password",
                     });
                 }
                 bcrypt.compare(password, saveUser.password).then((doMatch) => {

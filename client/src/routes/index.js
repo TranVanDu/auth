@@ -7,6 +7,7 @@ import MyFollowingPost from "../components/screens/MyFollowingPost/MyFollowingPo
 import Profile from "../components/screens/Profile/Profile";
 import UserProfile from "../components/screens/UserProfile/UserProfile";
 import Forgot from "../components/screens/ForgotPassword/index";
+import ChatPage from "../components/screens/Chat/ChatPage";
 export const Routes = [
     {
         path: "/",
@@ -38,6 +39,11 @@ export const Routes = [
         path: "/profile",
         exact: true,
         component: Profile,
+    },
+    {
+        path: "/chat",
+        exact: true,
+        component: ChatPage,
     },
     {
         path: "/confirm-password/:token",

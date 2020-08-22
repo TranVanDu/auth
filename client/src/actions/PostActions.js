@@ -28,8 +28,8 @@ export const getAllPosts = (filter) => (dispatch) => {
                 resolve(res.data);
             })
             .catch((err) => {
-                console.log("error", err);
-                if (err.response.data.status_code !== 401) {
+                console.log("error", err.response);
+                if (err.response.data?.status_code !== 401) {
                     toast.error(err.response.data.message);
                 }
                 reject(err.response);
@@ -47,7 +47,7 @@ export const getPost = (id) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                if (err.response.data.status_code !== 401) {
+                if (err.response.data?.status_code !== 401) {
                     toast.error(err.response.data.message);
                 }
 
@@ -67,7 +67,7 @@ export const createPost = (data, headers) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                if (err.response.data.status_code !== 401) {
+                if (err.response.data?.status_code !== 401) {
                     toast.error(err.response.data.message);
                 }
                 // toast.error(err.response.data.message);
@@ -86,7 +86,7 @@ export const deletePost = (id) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                if (err.response.data.status_code !== 401) {
+                if (err.response.data?.status_code !== 401) {
                     toast.error("Đã có lỗi xảy ra");
                 }
                 // toast.error("Đã có lỗi xảy ra");
@@ -129,7 +129,7 @@ export const likePost = (data, flag) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                if (err.response.data.status_code !== 401) {
+                if (err.response.data?.status_code !== 401) {
                     toast.error("Đã có lỗi xảy ra");
                 }
                 // toast.error("Đã có lỗi xảy ra");
@@ -157,7 +157,7 @@ export const unlikePost = (data, flag) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                if (err.response.data.status_code !== 401) {
+                if (err.response.data?.status_code !== 401) {
                     toast.error("Đã có lỗi xảy ra");
                 }
                 // toast.error("Đã có lỗi xảy ra");
@@ -187,7 +187,7 @@ export const commentPost = (data, flag) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                if (err.response.data.status_code !== 401) {
+                if (err.response.data?.status_code !== 401) {
                     toast.error("Đã có lỗi xảy ra");
                 }
                 // toast.error("Đã có lỗi xảy ra");
@@ -209,7 +209,7 @@ export const getMyPosts = (filter) => (dispatch) => {
             })
             .catch((err) => {
                 console.log("error", err);
-                if (err.response.data.status_code !== 401) {
+                if (err.response.data?.status_code !== 401) {
                     toast.error("Đã có lỗi xảy ra");
                 }
                 // toast.error("Đã có lỗi xảy ra");

@@ -80,7 +80,7 @@ export default function Login(props) {
                         }, 3000);
                     } else {
                         setLoading(false);
-                        toast.error(result.message.message);
+                        toast.error(result.status);
                     }
                 })
                 .catch((err) => {

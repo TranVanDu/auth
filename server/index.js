@@ -18,6 +18,7 @@ const { MONGO_URI } = require("./config/key");
 //     useUnifiedTopology: true,
 //     useCreateIndex: true,
 // });
+
 //sử dụng socket.io
 
 const connect = mongoose.connect(MONGO_URI, {
