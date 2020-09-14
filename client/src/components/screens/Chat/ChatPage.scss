@@ -1,0 +1,17 @@
+.chatPage {
+  min-height: calc(100vh - 110px);
+
+  .ant-card-body {
+    padding: 0px;
+
+    .ant-tabs-nav-list {
+      width: -webkit-fill-available;
+      justify-content: space-around;
+
+      .ant-tabs-tab {
+        margin: 0px;
+        padding: 20px;
+      }
+    }
+  }
+}

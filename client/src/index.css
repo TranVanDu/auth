@@ -1,25 +1,28 @@
 :root {
-	--instagram-color1: #ccc8ca;
+  --instagram-color1: #ccc8ca;
 }
 
 /* width */
 ::-webkit-scrollbar {
-	width: 5px;
+  width: 5px;
+}
+::-webkit-scrollbar {
+  height: 0px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-	box-shadow: inset 0 0 5px #fff;
-	border-radius: 10px;
+  box-shadow: inset 0 0 5px #fff;
+  border-radius: 10px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-	background: var(--instagram-color1);
-	border-radius: 10px;
+  background: var(--instagram-color1);
+  border-radius: 10px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-	background: #fff;
+  background: #fff;
 }
