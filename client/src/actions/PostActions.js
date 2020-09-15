@@ -28,11 +28,12 @@ export const getAllPosts = (filter) => (dispatch) => {
         resolve(res.data);
       })
       .catch((err) => {
-        console.log('error', err.response);
-        if (err.response?.data.status_code !== 401) {
+        console.log('error', err);
+        if (err?.response?.data?.status_code !== 401) {
           toast.error(err.response.data.message);
-        }
-        reject(err.response);
+        } else toast.error('Có lỗi xảy ra');
+
+        reject(err);
       });
   });
 };

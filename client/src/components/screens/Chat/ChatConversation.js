@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { List, Avatar } from 'antd';
 import moment from 'moment';
 import Truncate from 'react-truncate';
+import InfiniteScroll from 'react-infinite-scroller';
 
 export default class ChatConversation extends Component {
   static propTypes = {
@@ -12,16 +13,25 @@ export default class ChatConversation extends Component {
   render() {
     const data = [
       {
-        title: 'Ant Design Title 1',
+        id: 1,
+        name: 'Ant Design Title 1',
+        url: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
       },
       {
-        title: 'Ant Design Title 2',
+        id: 2,
+        name: 'Ant Design Title 2',
+        url: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
       },
       {
-        title: 'Ant Design Title 3',
+        id: 3,
+        name: 'Ant Design Title 3',
+        url: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
       },
+
       {
-        title: 'Ant Design Title 4',
+        id: 4,
+        name: 'Ant Design Title 4',
+        url: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
       },
     ];
     return (
@@ -29,12 +39,15 @@ export default class ChatConversation extends Component {
         itemLayout="horizontal"
         dataSource={data}
         renderItem={(item) => (
-          <List.Item>
+          <List.Item
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              this.props.onDetail(item);
+            }}
+          >
             <List.Item.Meta
-              avatar={
-                <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-              }
-              title={<a href="https://ant.design">{item.title}</a>}
+              avatar={<Avatar src={item.url} />}
+              title={item.name}
               description={
                 <div>
                   <div>
