@@ -1,0 +1,257 @@
+const Conversation = require('../../models/conversation');
+const User = require('../../models/user');
+const Message = require('../../models/message');
+
+//tạo conversation
+module.exports.createConversation = async (req, res) => {
+    try {
+        const { id } = req.body;
+        const contactUser = await User.findById(id).exec();
+        const currentUser = req.user;
+
+        if (contactUser._id.toString() === currentUser._id.toString()) {
+            return res.status(404).json({
+                status: 'error',
+                status_code: 404,
+                message: 'Something went wrong',
+            });
+        }
+
+        const checkConversation = await Conversation.findOne({
+            $or: [
+                {
+                    $and: [
+                        { userId: currentUser._id, contactId: contactUser._id },
+                    ],
+                },
+                {
+                    $and: [
+                        { userId: contactUser._id, contactId: currentUser._id },
+                    ],
+                },
+            ],
+        });
+
+        if (checkConversation) {
+            return res.status(422).json({
+                status: 'error',
+                status_code: 422,
+                message: 'Something went wrong',
+            });
+        }
+
+        const conversation = await Conversation.create({
+            userId: currentUser._id,
+            contactId: contactUser._id,
+        });
+
+        res.json({
+            status: 'success',
+            status_code: 200,
+            message: 'success',
+            data: { conversation },
+        });
+    } catch (error) {
+        return res.status(422).json({
+            status: 'error',
+            status_code: 422,
+            message: error,
+        });
+    }
+};
+
+//get conversation
+module.exports.getConversations = async (req, res) => {
+    try {
+        const currentUser = req.user;
+        const perPage = parseInt(req.query.perPage) || 15;
+        const currentPage = parseInt(req.query.page) || 1;
+
+        const conversation = await Conversation.find({
+            $or: [
+                {
+                    userId: currentUser._id,
+                },
+                {
+                    contactId: currentUser._id,
+                },
+            ],
+        })
+            .skip(perPage * (currentPage - 1))
+            .limit(perPage)
+            .populate('userId', '_id name avatar')
+            .populate('contactId', '_id name avatar')
+            .lean();
+        if (conversation) {
+            const messageQuery = conversation.map((item, index) => {
+                return Message.findOne({
+                    conversationId: item._id,
+                })
+                    .sort({ createdAt: -1 })
+                    .populate('sender', '_id name avatar');
+            });
+
+            Promise.all(messageQuery)
+                .then(async (message) => {
+                    for (let i = 0; i < conversation.length; i++) {
+                        conversation[i]['lastest_chat'] = message[i];
+                    }
+
+                    let total = await Conversation.count({});
+
+                    res.json({
+                        status: 'success',
+                        status_code: 200,
+                        data: {
+                            conversations: conversation,
+                        },
+                        currentPage,
+                        perPage,
+                        pages: Math.ceil(total / perPage),
+                        total,
+                    });
+                })
+                .catch((error) => {
+                    return res.status(422).json({
+                        status: 'success',
+                        status_code: 422,
+                        message: error,
+                    });
+                });
+        }
+    } catch (error) {
+        return res.status(422).json({
+            status: 'error',
+            status_code: 422,
+            message: error,
+        });
+    }
+};
+
+module.exports.checkExistConversation = async (req, res) => {
+    try {
+        const currentUser = req.user;
+        const { id } = req.body;
+        const contactUser = await User.findById(id).exec();
+
+        if (currentUser._id.toString() === contactUser._id.toString()) {
+            return res.status(404).json({
+                status: 'error',
+                status_code: 404,
+                message: 'Something went wrong',
+            });
+        }
+
+        const checkConversation = await Conversation.findOne({
+            $or: [
+                {
+                    $and: [
+                        { userId: currentUser._id, contactId: contactUser._id },
+                    ],
+                },
+                {
+                    $and: [
+                        { userId: contactUser._id, contactId: currentUser._id },
+                    ],
+                },
+            ],
+        });
+
+        if (checkConversation) {
+            return res.json({
+                status: 'success',
+                status_code: 422,
+                message: 'exist conversation',
+                data: {
+                    conversation: checkConversation,
+                },
+            });
+        } else {
+            return res.status(422).json({
+                status: 'error',
+                status_code: 422,
+                message: 'Not exist conversation',
+            });
+        }
+    } catch (error) {
+        return res.status(422).json({
+            status: 'error',
+            status_code: 422,
+            message: error,
+        });
+    }
+};
+
+module.exports.conversationDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const perPage = parseInt(req.query.perPage) || 15;
+        const currentPage = parseInt(req.query.page) || 1;
+
+        const conversation = await Conversation.findById(id).lean();
+
+        const message = await Message.find({
+            conversationId: conversation._id,
+        })
+            .skip(perPage * (currentPage - 1))
+            .limit(perPage)
+            .populate('sender', '_id name avatar');
+
+        conversation['message'] = message;
+
+        res.json({
+            status: 'success',
+            status_code: 200,
+            message: 'success',
+            data: {
+                conversation,
+            },
+        });
+    } catch (error) {
+        return res.status(422).json({
+            status: 'error',
+            status_code: 422,
+            message: error,
+        });
+    }
+};
+
+module.exports.createMessage = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const sender = req.user._id;
+        const { conversationType, receiver } = req.body;
+
+        if (conversationType == 'Conversation') {
+            const user = await User.findById(receiver).lean();
+            if (user) {
+                const conversation = await Conversation.findById(id).lean();
+
+                if (conversation) {
+                    let message = await Message.create({
+                        ...req.body,
+                        sender,
+                        conversationId: conversation._id,
+                    });
+
+                    conversation['message'] = message;
+
+                    res.json({
+                        status: 'success',
+                        status_code: 200,
+                        message: 'success',
+                        data: {
+                            conversation,
+                        },
+                    });
+                }
+            }
+        }
+    } catch (error) {
+        return res.status(422).json({
+            status: 'error',
+            status_code: 422,
+            message: error,
+        });
+    }
+};

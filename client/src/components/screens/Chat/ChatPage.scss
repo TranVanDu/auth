@@ -1,62 +1,91 @@
 .chatPage {
-  min-height: calc(100vh - 110px);
-  margin: 0px 10px;
+    min-height: calc(100vh - 110px);
+    margin: 0px 10px;
 
-  .ant-card-body {
-    padding: 0px;
+    .ant-card-body {
+        padding: 0px;
 
-    .ant-tabs-nav-list {
-      width: -webkit-fill-available;
-      justify-content: space-around;
+        .ant-tabs-nav-list {
+            width: -webkit-fill-available;
+            justify-content: space-around;
 
-      .ant-tabs-tab {
-        margin: 0px;
-        padding: 20px;
-      }
+            .ant-tabs-tab {
+                margin: 0px;
+                padding: 20px;
+            }
+        }
     }
-  }
 }
 
 @media (max-width: 767px) {
-  .chatPage {
-    margin: 0px;
-  }
+    .chatPage {
+        margin: 0px;
+    }
 }
 
 .sendMessage {
-  position: absolute;
-  bottom: 0px;
-  display: flex;
-  flex-direction: row;
-  width: -webkit-fill-available;
+    position: absolute;
+    bottom: 0px;
+    display: flex;
+    flex-direction: row;
+    width: -webkit-fill-available;
 
-  .sendMessage__form {
-    flex: 1;
+    .sendMessage__form {
+        flex: 1;
 
-    .sendMessage__input {
-      width: -webkit-fill-available;
-      outline: none;
-      height: 40px;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-      padding: 20px;
+        .sendMessage__input {
+            width: -webkit-fill-available;
+            outline: none;
+            height: 40px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
     }
-  }
-  .sendMessage__button {
-    border: none;
-    padding: 0px 20px;
-    border-radius: 20px;
-    margin-left: 5px;
-    cursor: pointer;
+    .sendMessage__button {
+        border: none;
+        padding: 0px 20px;
+        border-radius: 20px;
+        margin-left: 5px;
+        cursor: pointer;
 
-    &:focus {
-      border: none;
-      outline: none;
+        &:focus {
+            border: none;
+            outline: none;
+        }
+
+        &:hover {
+            background-color: #bbb;
+            color: blueviolet;
+        }
+    }
+}
+
+.messages {
+    .otherMessages {
+        display: flex;
+        justify-content: flex-start;
     }
 
-    &:hover {
-      background-color: #bbb;
-      color: blueviolet;
+    .ownMessages {
+        display: flex;
+        justify-content: flex-end;
     }
-  }
+    .message {
+        margin-bottom: 1rem;
+        font-size: 12px;
+        padding: 10px 10px;
+        margin: 1px;
+        margin-left: 25px;
+        background-color: #f4f4f8;
+        border-radius: 10px;
+        display: inline-block;
+        word-break: break-all;
+        max-width: 250px;
+    }
+
+    .ownMessage {
+        background-color: #1000ff;
+        color: #fff;
+    }
 }

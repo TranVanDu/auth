@@ -1,34 +1,41 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema.Types;
 
-const messageTypes = ["text", "image", "file", "notification"];
-const conversationTypes = ["User", "ChatGroup"];
+const messageTypes = ['text', 'image', 'file', 'notification'];
+const conversationTypes = ['Conversation', 'ChatGroup'];
 const messageSchema = new mongoose.Schema(
     {
         sender: {
             type: ObjectId,
-            ref: "User",
+            ref: 'User',
         },
         receiver: {
             type: ObjectId,
             required: true,
-            refPath: "conversationType",
+            refPath: 'conversationType',
         },
         conversationType: {
             type: String,
             enum: conversationTypes,
-            default: "User",
+            default: 'Conversation',
         },
         type: {
             type: String,
             enum: messageTypes,
-            default: "text",
+            default: 'text',
         },
         message: {
             type: String,
             maxlength: 1000,
             min: 1,
         },
+
+        is_read: {
+            type: String,
+            enum: [true, false],
+            default: false,
+        },
+
         images: [String],
         files: [
             {
@@ -36,11 +43,14 @@ const messageSchema = new mongoose.Schema(
                 path: String,
             },
         ],
-        conversationId: { type: String },
+        conversationId: {
+            type: ObjectId,
+            refPath: 'conversationType',
+        },
     },
     { timestamps: true }
 );
 
-const Message = mongoose.model("Message", messageSchema);
+const Message = mongoose.model('Message', messageSchema);
 
 module.exports = Message;

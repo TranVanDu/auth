@@ -1,15 +1,15 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema.Types;
 
-const contactSchema = new mongoose.Schema(
+const conversationSchema = new mongoose.Schema(
     {
         userId: {
             type: ObjectId,
-            ref: "User",
+            ref: 'User',
         },
         contactId: {
             type: ObjectId,
-            ref: "User",
+            ref: 'User',
         },
         status: {
             type: Boolean,
@@ -19,6 +19,6 @@ const contactSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const Contact = mongoose.model("Contact", contactSchema);
+const Contact = mongoose.model('Conversation', conversationSchema);
 
 module.exports = Contact;
