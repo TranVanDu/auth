@@ -10,6 +10,7 @@ const requireLogin = require('./middleware/requireLogin');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const { MONGO_URI } = require('./config/key');
+const initSocket = require('./socket');
 
 //connect mongo
 // mongoose.connect(MONGO_URI, {
@@ -55,9 +56,7 @@ app.use('/api/posts', requireLogin, require('./routes/post'));
 app.use('/api/chat', requireLogin, require('./routes/chat'));
 app.use('/uploads', express.static('uploads'));
 
-io.on('connect', (socket) => {
-    console.log('connect');
-});
+initSocket(io);
 // Serve static assets if in production
 if (process.env.NODE_ENV === 'production') {
     // Set static folder
@@ -72,6 +71,6 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log('Server is running on port', PORT);
 });

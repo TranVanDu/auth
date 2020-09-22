@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Spin, Card, Avatar, Space } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Scrollbars } from 'react-custom-scrollbars';
+import { getSocket } from '../../../socket';
 import {
     getConversationDetails,
     createMessage,
@@ -18,6 +20,8 @@ class ChatMessage extends Component {
             name: PropTypes.string.isRequired,
         }),
     };
+
+    ref = React.createRef();
 
     static defaultProps = {
         item: {
@@ -45,7 +49,23 @@ class ChatMessage extends Component {
                 isLoading: false,
                 message: message.data.conversation.message,
             });
+
+            this.ref.current.scrollToBottom();
         }
+
+        getSocket().on('res-send-message', (data) => {
+            console.log(data);
+            if (
+                data.conversationId.toString() ===
+                    this.props.item.id.toString() &&
+                data.sender._id !== this.props.user._id
+            ) {
+                this.setState({
+                    message: [...this.state.message, data],
+                });
+                this.ref.current.scrollToBottom();
+            }
+        });
     }
 
     // UNSAFE_componentWillReceiveProps(nextProps) {
@@ -95,28 +115,37 @@ class ChatMessage extends Component {
                     isLoading: false,
                     message: message.data.conversation.message,
                 });
+                this.ref.current.scrollToBottom();
             }
         }
     }
 
-    sendMessage = async (id, data) => {
-        console.log('sdsdsd');
-        // let message = await this.props.createMessage(id, data);
+    sendMessage = async (e) => {
+        e.preventDefault();
+        let data = this.state.value;
+        let id = this.state.id;
+        let message = await this.props.createMessage(id, {
+            message: data,
+            conversationType: 'Conversation',
+        });
 
-        // if (message) {
-        //     this.setState({
-        //         ...this.state,
-        //         message: [
-        //             ...this.state.message,
-        //             message.data.conversation.message,
-        //         ],
-        //     });
-        // }
+        if (message) {
+            this.setState({
+                ...this.state,
+                message: [
+                    ...this.state.message,
+                    message.data.conversation.message,
+                ],
+                value: '',
+            });
+            this.ref.current.scrollToBottom();
+        }
     };
 
     render() {
         const { user } = this.props;
         const { message, loading, hasMore } = this.state;
+        // console.log(this.state.value, this.state.id);
         return (
             <Card
                 style={{
@@ -158,10 +187,17 @@ class ChatMessage extends Component {
                                 hasMore={!loading && hasMore}
                                 useWindow={false}
                             >
-                                <MessageItem
-                                    messages={message}
-                                    userId={user._id}
-                                />
+                                <Scrollbars
+                                    ref={this.ref}
+                                    autoHeight
+                                    autoHeightMin={'calc(100vh - 250px)'}
+                                    autoHide
+                                >
+                                    <MessageItem
+                                        messages={message}
+                                        userId={user._id}
+                                    />
+                                </Scrollbars>
                             </InfiniteScroll>
                             {/* {message.length > 0 &&
                                 message.map((item, index) => {
@@ -173,18 +209,18 @@ class ChatMessage extends Component {
                                     );
                                 })} */}
                         </div>
-                        <div className="sendMessage">
-                            <form
-                                className="sendMessage__form"
-                                onSubmit={this.sendMessage}
-                            >
+                        <form
+                            className="sendMessage"
+                            onSubmit={this.sendMessage}
+                        >
+                            <div className="sendMessage__form">
                                 <input
                                     className="sendMessage__input"
                                     name="message"
                                     value={this.state.value}
                                     onChange={this.onChangeValue}
                                 />
-                            </form>
+                            </div>
 
                             <button
                                 className="sendMessage__button"
@@ -192,7 +228,7 @@ class ChatMessage extends Component {
                             >
                                 Gửi
                             </button>
-                        </div>
+                        </form>
                     </React.Fragment>
                 )}
             </Card>

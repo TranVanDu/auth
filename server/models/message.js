@@ -31,7 +31,7 @@ const messageSchema = new mongoose.Schema(
         },
 
         is_read: {
-            type: String,
+            type: Boolean,
             enum: [true, false],
             default: false,
         },

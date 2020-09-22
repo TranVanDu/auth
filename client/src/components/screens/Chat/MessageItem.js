@@ -1,9 +1,10 @@
 import React from 'react';
+import { Scrollbars } from 'react-custom-scrollbars';
 import moment from 'moment';
 
 function MessageItem({ messages, userId }) {
     return (
-        <div>
+        <div style={{ padding: '10px' }}>
             {messages.map((message, i) => {
                 const time = moment(messages[i].createdAt);
                 const id = message.sender._id;
@@ -24,7 +25,7 @@ function MessageItem({ messages, userId }) {
 
                 return (
                     <div key={i} style={{ position: 'relative' }}>
-                        {i === 0 && (
+                        {/* {i === 0 && (
                             <div
                                 style={{
                                     display: 'flex',
@@ -36,7 +37,7 @@ function MessageItem({ messages, userId }) {
                                 on
                                 {time.format(' HH:mm')}
                             </div>
-                        )}
+                        )} */}
 
                         {!diff_day && diff > 30 && (
                             <div

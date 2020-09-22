@@ -62,6 +62,13 @@
 }
 
 .messages {
+    max-height: calc(100vh - 250px);
+    padding: 10px;
+    // overflow: hidden;
+
+    // &:hover {
+    //     overflow: auto;
+    // }
     .otherMessages {
         display: flex;
         justify-content: flex-start;
@@ -78,14 +85,14 @@
         margin: 1px;
         margin-left: 25px;
         background-color: #f4f4f8;
-        border-radius: 10px;
+        border-radius: 15px;
         display: inline-block;
         word-break: break-all;
         max-width: 250px;
     }
 
     .ownMessage {
-        background-color: #1000ff;
+        background-color: #f6c9f6;
         color: #fff;
     }
 }

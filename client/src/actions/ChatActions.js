@@ -5,6 +5,7 @@ import {
 } from './types';
 import { toast } from 'react-toastify';
 import api from '../api/index';
+import { getSocket } from '../socket';
 import { API_URL } from '../config/index';
 
 export const createMessage = (id, data) => (dispatch) => {
@@ -13,6 +14,10 @@ export const createMessage = (id, data) => (dispatch) => {
             .post(`${API_URL}/chat/${id}`, data)
             .then((res) => {
                 dispatch({ type: CREATE_MESSAGE, payload: res.data });
+                getSocket().emit(
+                    'send-message',
+                    res.data.data.conversation.message
+                );
                 resolve(res.data);
             })
             .catch((err) => {

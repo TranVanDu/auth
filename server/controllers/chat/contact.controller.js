@@ -185,7 +185,7 @@ module.exports.checkExistConversation = async (req, res) => {
 module.exports.conversationDetails = async (req, res) => {
     try {
         const { id } = req.params;
-        const perPage = parseInt(req.query.perPage) || 15;
+        const perPage = parseInt(req.query.perPage) || 100;
         const currentPage = parseInt(req.query.page) || 1;
 
         const conversation = await Conversation.findById(id).lean();
@@ -219,31 +219,44 @@ module.exports.conversationDetails = async (req, res) => {
 module.exports.createMessage = async (req, res) => {
     try {
         const { id } = req.params;
-        const sender = req.user._id;
-        const { conversationType, receiver } = req.body;
+        const { conversationType } = req.body;
+
+        const sender = await User.findById(req.user._id);
 
         if (conversationType == 'Conversation') {
-            const user = await User.findById(receiver).lean();
-            if (user) {
-                const conversation = await Conversation.findById(id).lean();
+            const conversation = await Conversation.findById(id).lean();
+            if (conversation) {
+                // const conversation = await Conversation.findById(id).lean();
 
-                if (conversation) {
+                let receiver =
+                    conversation.userId.toString() !== req.user._id.toString()
+                        ? conversation.userId
+                        : conversation.contactId;
+                const user = await User.findById(receiver).lean();
+
+                if (user) {
                     let message = await Message.create({
                         ...req.body,
-                        sender,
+                        receiver,
+                        sender: sender._id,
                         conversationId: conversation._id,
                     });
 
-                    conversation['message'] = message;
+                    message
+                        .populate('sender', '_id avatar name')
+                        .execPopulate()
+                        .then((result) => {
+                            conversation['message'] = result;
 
-                    res.json({
-                        status: 'success',
-                        status_code: 200,
-                        message: 'success',
-                        data: {
-                            conversation,
-                        },
-                    });
+                            res.json({
+                                status: 'success',
+                                status_code: 200,
+                                message: 'success',
+                                data: {
+                                    conversation,
+                                },
+                            });
+                        });
                 }
             }
         }
