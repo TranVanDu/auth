@@ -1,5 +1,4 @@
 import React from 'react';
-import { Scrollbars } from 'react-custom-scrollbars';
 import moment from 'moment';
 
 function MessageItem({ messages, userId }) {
@@ -25,21 +24,7 @@ function MessageItem({ messages, userId }) {
 
                 return (
                     <div key={i} style={{ position: 'relative' }}>
-                        {/* {i === 0 && (
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    fontSize: '10px',
-                                }}
-                            >
-                                {time.format('dddd ')}
-                                on
-                                {time.format(' HH:mm')}
-                            </div>
-                        )} */}
-
-                        {!diff_day && diff > 30 && (
+                        {i === 0 && (
                             <div
                                 style={{
                                     display: 'flex',
@@ -53,7 +38,21 @@ function MessageItem({ messages, userId }) {
                             </div>
                         )}
 
-                        {diff_time > 30 && diff_day && (
+                        {i !== 0 && !diff_day && diff > 30 && (
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    fontSize: '10px',
+                                }}
+                            >
+                                {time.format('dddd ')}
+                                on
+                                {time.format(' HH:mm')}
+                            </div>
+                        )}
+
+                        {i !== 0 && diff_time > 30 && diff_day && (
                             <div
                                 style={{
                                     display: 'flex',

@@ -185,19 +185,32 @@ module.exports.checkExistConversation = async (req, res) => {
 module.exports.conversationDetails = async (req, res) => {
     try {
         const { id } = req.params;
-        const perPage = parseInt(req.query.perPage) || 100;
+        const perPage = parseInt(req.query.perPage) || 15;
         const currentPage = parseInt(req.query.page) || 1;
 
         const conversation = await Conversation.findById(id).lean();
 
+        await Message.updateMany(
+            {
+                conversationId: conversation._id,
+                receiver: req.user._id,
+            },
+            { is_read: true }
+        );
+
         const message = await Message.find({
             conversationId: conversation._id,
         })
+            .sort({ createdAt: -1 })
             .skip(perPage * (currentPage - 1))
             .limit(perPage)
             .populate('sender', '_id name avatar');
 
-        conversation['message'] = message;
+        const total = await Message.count({
+            conversationId: conversation._id,
+        });
+
+        conversation['message'] = message.reverse();
 
         res.json({
             status: 'success',
@@ -205,6 +218,11 @@ module.exports.conversationDetails = async (req, res) => {
             message: 'success',
             data: {
                 conversation,
+                pagination: {
+                    page: currentPage,
+                    total_page: Math.ceil(total / perPage),
+                    total: total,
+                },
             },
         });
     } catch (error) {

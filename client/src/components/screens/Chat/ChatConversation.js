@@ -12,6 +12,8 @@ class ChatConversation extends Component {
     // static propTypes = {
     //   prop: PropTypes,
     // };
+
+    _isMounted = false;
     state = {
         chat: [],
         isLoading: false,
@@ -19,34 +21,40 @@ class ChatConversation extends Component {
     };
 
     async componentDidMount() {
+        this._isMounted = true;
         let data = await this.props.getConversations();
-        this.setState({
-            chat: data.data.conversations,
-        });
-
-        if (this.state.chat.length > 0) {
-            getSocket().on('res-last-message', (data) => {
-                if (data) {
-                    let chat = [...this.state.chat];
-                    let index = this.state.chat.findIndex((item, index) => {
-                        return (
-                            item._id.toString() ===
-                            data.conversationId.toString()
-                        );
-                    });
-
-                    chat[index] = {
-                        ...chat[index],
-                        lastest_chat: data,
-                    };
-
-                    this.setState({
-                        ...this.state,
-                        chat: chat,
-                    });
-                }
+        if (this._isMounted) {
+            this.setState({
+                chat: data.data.conversations,
             });
+            if (this.state.chat.length > 0) {
+                getSocket().on('res-last-message', (data) => {
+                    if (data) {
+                        let chat = [...this.state.chat];
+                        let index = this.state.chat.findIndex((item, index) => {
+                            return (
+                                item._id.toString() ===
+                                data.conversationId.toString()
+                            );
+                        });
+
+                        chat[index] = {
+                            ...chat[index],
+                            lastest_chat: data,
+                        };
+
+                        this.setState({
+                            ...this.state,
+                            chat: chat,
+                        });
+                    }
+                });
+            }
         }
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render() {

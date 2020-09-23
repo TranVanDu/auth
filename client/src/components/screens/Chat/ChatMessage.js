@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Spin, Card, Avatar, Space } from 'antd';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { getSocket } from '../../../socket';
 import {
@@ -11,8 +11,13 @@ import MessageItem from './MessageItem';
 import { connect } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroller';
 import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
 
 class ChatMessage extends Component {
+    // constructor(props) {
+    //     super(props);
+    //     this._debounceHandle = _.debounce(this.handleInfiniteOnLoad, 300);
+    // }
     static propTypes = {
         item: PropTypes.shape({
             id: PropTypes.string,
@@ -35,26 +40,42 @@ class ChatMessage extends Component {
         isLoading: true,
         value: '',
         message: [],
-        loading: false,
         hasMore: true,
+        page: 0,
+        total: 0,
+        total_page: 0,
+        width: window.innerWidth,
+    };
+
+    handleResize = (e) => {
+        this.setState({ width: window.innerWidth });
     };
 
     async componentDidMount() {
+        window.addEventListener('resize', this.handleResize);
         let message = await this.props.getConversationDetails(
             this.props.item.id
         );
 
         if (message) {
+            let more =
+                message.data.pagination.page ===
+                message.data.pagination.total_page
+                    ? false
+                    : true;
             this.setState({
                 isLoading: false,
+                hasMore: more,
                 message: message.data.conversation.message,
+                total: message.data.pagination.total,
+                page: message.data.pagination.page,
+                total_page: message.data.pagination.total_page,
             });
 
             this.ref.current.scrollToBottom();
         }
 
         getSocket().on('res-send-message', (data) => {
-            console.log(data);
             if (
                 data.conversationId.toString() ===
                     this.props.item.id.toString() &&
@@ -62,11 +83,44 @@ class ChatMessage extends Component {
             ) {
                 this.setState({
                     message: [...this.state.message, data],
+                    total: this.state.total + 1,
                 });
                 this.ref.current.scrollToBottom();
             }
         });
     }
+
+    handleInfiniteOnLoad = () => {
+        console.log(this.state.page, this.state.total_page);
+        if (this.state.page === this.state.total_page) {
+            toast.success(
+                'Toàn bộ cuộc trò chuyện trên hệ thống đã được hiển thị!'
+            );
+
+            this.setState({
+                hasMore: false,
+            });
+
+            return;
+        } else {
+            console.log('api');
+            this.props
+                .getConversationDetails(this.props.item.id, {
+                    page: this.state.page + 1,
+                })
+                .then((res) => {
+                    setTimeout(() => {
+                        this.setState({
+                            message: [
+                                ...res.data.conversation.message,
+                                ...this.state.message,
+                            ],
+                            page: res.data.pagination.page,
+                        });
+                    }, 3000);
+                });
+        }
+    };
 
     // UNSAFE_componentWillReceiveProps(nextProps) {
     //   if (nextProps.id !== this.props.id) {
@@ -111,11 +165,22 @@ class ChatMessage extends Component {
             );
 
             if (message) {
+                let more =
+                    message.data.pagination.page ===
+                    message.data.pagination.total_page
+                        ? false
+                        : true;
                 this.setState({
-                    isLoading: false,
                     message: message.data.conversation.message,
+                    isLoading: false,
+                    hasMore: more,
+                    page: message.data.pagination.page,
+                    total: message.data.pagination.total,
+                    total_page: message.data.pagination.total_page,
                 });
-                this.ref.current.scrollToBottom();
+                if (this.ref.current) {
+                    this.ref.current.scrollToBottom();
+                }
             }
         }
     }
@@ -137,15 +202,20 @@ class ChatMessage extends Component {
                     message.data.conversation.message,
                 ],
                 value: '',
+                total: this.state.total + 1,
             });
             this.ref.current.scrollToBottom();
         }
     };
 
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleResize);
+    }
+
     render() {
         const { user } = this.props;
-        const { message, loading, hasMore } = this.state;
-        // console.log(this.state.value, this.state.id);
+        const { message, hasMore } = this.state;
+
         return (
             <Card
                 style={{
@@ -163,7 +233,17 @@ class ChatMessage extends Component {
                 }
                 extra={
                     <Space size="middle">
-                        <ExclamationCircleOutlined />
+                        {this.state.width < 768 ? (
+                            <UserOutlined
+                                onClick={this.props.onDawerConversation}
+                            />
+                        ) : null}
+
+                        {this.state.width < 992 ? (
+                            <ExclamationCircleOutlined
+                                onClick={this.props.onDawerInfo}
+                            />
+                        ) : null}
                     </Space>
                 }
             >
@@ -180,25 +260,28 @@ class ChatMessage extends Component {
                 ) : (
                     <React.Fragment>
                         <div className="messages">
-                            <InfiniteScroll
-                                initialLoad={false}
-                                pageStart={0}
-                                // loadMore={this.handleInfiniteOnLoad}
-                                hasMore={!loading && hasMore}
-                                useWindow={false}
+                            <Scrollbars
+                                ref={this.ref}
+                                autoHeight
+                                autoHeightMin={'calc(100vh - 250px)'}
+                                autoHide
                             >
-                                <Scrollbars
-                                    ref={this.ref}
-                                    autoHeight
-                                    autoHeightMin={'calc(100vh - 250px)'}
-                                    autoHide
+                                <InfiniteScroll
+                                    isReverse={true}
+                                    initialLoad={false}
+                                    pageStart={1}
+                                    loadMore={this.handleInfiniteOnLoad}
+                                    hasMore={hasMore}
+                                    useWindow={false}
+                                    loader={<Spin key={0} />}
                                 >
                                     <MessageItem
                                         messages={message}
                                         userId={user._id}
                                     />
-                                </Scrollbars>
-                            </InfiniteScroll>
+                                </InfiniteScroll>
+                            </Scrollbars>
+
                             {/* {message.length > 0 &&
                                 message.map((item, index) => {
                                     return (
@@ -216,6 +299,7 @@ class ChatMessage extends Component {
                             <div className="sendMessage__form">
                                 <input
                                     className="sendMessage__input"
+                                    placeholder="Nhập tin nhắn"
                                     name="message"
                                     value={this.state.value}
                                     onChange={this.onChangeValue}
@@ -244,7 +328,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        getConversationDetails: (id) => dispatch(getConversationDetails(id)),
+        getConversationDetails: (id, data) =>
+            dispatch(getConversationDetails(id, data)),
         createMessage: (id, data) => dispatch(createMessage(id, data)),
     };
 };

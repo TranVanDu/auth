@@ -16,6 +16,9 @@
         }
     }
 }
+.ant-drawer-body {
+    padding: 0px !important;
+}
 
 @media (max-width: 767px) {
     .chatPage {
@@ -62,6 +65,7 @@
 }
 
 .messages {
+    position: relative;
     max-height: calc(100vh - 250px);
     padding: 10px;
     // overflow: hidden;
@@ -72,6 +76,11 @@
     .otherMessages {
         display: flex;
         justify-content: flex-start;
+    }
+    .ant-spin-spinning {
+        position: absolute;
+        top: 0px;
+        left: 50%;
     }
 
     .ownMessages {

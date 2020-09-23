@@ -44,10 +44,10 @@ export const getConversations = () => (dispatch) => {
     });
 };
 
-export const getConversationDetails = (id) => (dispatch) => {
+export const getConversationDetails = (id, data) => (dispatch) => {
     return new Promise((reslove, reject) => {
         return api
-            .get(`${API_URL}/chat/${id}`)
+            .get(`${API_URL}/chat/${id}`, { params: data })
             .then((res) => {
                 dispatch({ type: GET_CONVERSATION_DETAIL, payload: res.data });
                 reslove(res.data);

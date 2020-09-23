@@ -52,14 +52,16 @@ let initSocket = (io) => {
                 } else if (data.conversationType === 'Conversation') {
                     if (clients[data.receiver]) {
                         clients[data.receiver].forEach((socketId) => {
-                            io.sockets.connected[socketId].emit(
-                                'res-send-message',
-                                data
-                            );
-                            io.sockets.connected[socketId].emit(
-                                'res-last-message',
-                                data
-                            );
+                            if (io.sockets.connected[socketId]) {
+                                io.sockets.connected[socketId].emit(
+                                    'res-send-message',
+                                    data
+                                );
+                                io.sockets.connected[socketId].emit(
+                                    'res-last-message',
+                                    data
+                                );
+                            }
                         });
                     }
 
