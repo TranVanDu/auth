@@ -38,10 +38,10 @@ class ChatMessage extends Component {
     };
 
     state = {
-        isLoading: true,
+        isLoading: false,
         value: '',
         message: [],
-        hasMore: true,
+        hasMore: false,
         page: 0,
         total: 0,
         total_page: 0,
@@ -53,6 +53,9 @@ class ChatMessage extends Component {
     };
 
     async componentDidMount() {
+        this.setState({
+            isLoading: true,
+        });
         window.addEventListener('resize', this.handleResize);
         if (this.props.item.id) {
             let message = await this.props.getConversationDetails(
@@ -82,20 +85,21 @@ class ChatMessage extends Component {
                 hasMore: false,
             });
         }
-
-        getSocket().on('res-send-message', (data) => {
-            if (
-                data.conversationId.toString() ===
-                    this.props.item.id.toString() &&
-                data.sender._id !== this.props.user._id
-            ) {
-                this.setState({
-                    message: [...this.state.message, data],
-                    total: this.state.total + 1,
-                });
-                this.ref.current.scrollToBottom();
-            }
-        });
+        if (getSocket()) {
+            getSocket().on('res-send-message', (data) => {
+                if (
+                    data.conversationId.toString() ===
+                        this.props.item.id.toString() &&
+                    data.sender._id !== this.props.user._id
+                ) {
+                    this.setState({
+                        message: [...this.state.message, data],
+                        total: this.state.total + 1,
+                    });
+                    this.ref.current.scrollToBottom();
+                }
+            });
+        }
     }
 
     handleInfiniteOnLoad = () => {
@@ -165,28 +169,37 @@ class ChatMessage extends Component {
     };
 
     async componentDidUpdate(prevProps, prevState) {
-        if (this.props.item.id !== prevProps.item.id) {
-            let message = await this.props.getConversationDetails(
-                this.props.item.id
-            );
+        if (this.props.item.id) {
+            if (this.props.item.id !== prevProps.item.id) {
+                let message = await this.props.getConversationDetails(
+                    this.props.item.id
+                );
 
-            if (message) {
-                let more =
-                    message.data.pagination.page ===
-                    message.data.pagination.total_page
-                        ? false
-                        : true;
-                this.setState({
-                    message: message.data.conversation.message,
-                    isLoading: false,
-                    hasMore: more,
-                    page: message.data.pagination.page,
-                    total: message.data.pagination.total,
-                    total_page: message.data.pagination.total_page,
-                });
-                if (this.ref.current) {
-                    this.ref.current.scrollToBottom();
+                if (message) {
+                    let more =
+                        message.data.pagination.page ===
+                        message.data.pagination.total_page
+                            ? false
+                            : true;
+                    this.setState({
+                        message: message.data.conversation.message,
+                        isLoading: false,
+                        hasMore: more,
+                        page: message.data.pagination.page,
+                        total: message.data.pagination.total,
+                        total_page: message.data.pagination.total_page,
+                    });
+                    if (this.ref.current) {
+                        this.ref.current.scrollToBottom();
+                    }
                 }
+            }
+        } else {
+            if (this.props.item.id !== prevProps.item.id) {
+                this.setState({
+                    isLoading: false,
+                    hasMore: false,
+                });
             }
         }
     }
@@ -250,6 +263,7 @@ class ChatMessage extends Component {
     render() {
         const { user } = this.props;
         const { message, hasMore } = this.state;
+        console.log('sdsds', this.state);
 
         return (
             <Card

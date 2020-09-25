@@ -159,7 +159,7 @@ class ChatConversation extends Component {
                 loadMore={this.handleInfiniteOnLoad}
                 hasMore={hasMore}
                 useWindow={false}
-                loader={<Spin key={0} />}
+                loader={<Spin key={0} style={{ textAlign: 'center' }} />}
             >
                 <List
                     itemLayout="horizontal"

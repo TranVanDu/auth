@@ -47,6 +47,7 @@ export default function ChatPage() {
 
     const onDetail = (item) => {
         // setMount(false);
+
         setConversation(item);
     };
 

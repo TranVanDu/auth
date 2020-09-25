@@ -1,7 +1,8 @@
 import io from 'socket.io-client';
 import { getCookie } from '../helpers/session';
+import { BASE_URL } from '../config';
 
-const endpoint = 'http://localhost:5000';
+const endpoint = BASE_URL;
 let socket = null;
 
 const onConnected = () => {

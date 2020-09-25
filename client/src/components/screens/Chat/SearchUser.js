@@ -69,7 +69,7 @@ function SearchUser(props) {
                 placeholder="input search text"
                 onSearch={(value) => onSearch(value)}
             />
-            <div style={{ marginTop: '20px' }}>
+            <div style={{ marginTop: '20px', textAlign: 'center' }}>
                 {fetching ? (
                     <Spin />
                 ) : (
