@@ -77,6 +77,7 @@ module.exports.getConversations = async (req, res) => {
                 },
             ],
         })
+            .sort({ updatedAt: -1 })
             .skip(perPage * (currentPage - 1))
             .limit(perPage)
             .populate('userId', '_id name avatar')
@@ -105,9 +106,9 @@ module.exports.getConversations = async (req, res) => {
                         data: {
                             conversations: conversation,
                         },
-                        currentPage,
+                        page: currentPage,
                         perPage,
-                        pages: Math.ceil(total / perPage),
+                        total_page: Math.ceil(total / perPage),
                         total,
                     });
                 })
@@ -155,7 +156,9 @@ module.exports.checkExistConversation = async (req, res) => {
                     ],
                 },
             ],
-        });
+        })
+            .populate('userId', '_id name avatar')
+            .populate('contactId', '_id name avatar');
 
         if (checkConversation) {
             return res.json({
@@ -278,6 +281,46 @@ module.exports.createMessage = async (req, res) => {
                 }
             }
         }
+    } catch (error) {
+        return res.status(422).json({
+            status: 'error',
+            status_code: 422,
+            message: error,
+        });
+    }
+};
+
+exports.deleteConversation = async (req, res) => {
+    try {
+        console.log(req.body);
+        const { id } = req.body;
+        console.log(id);
+        let messageQuery = Message.remove({ conversationId: { $in: id } });
+        let conversationQuery = Conversation.remove({ _id: { $in: id } });
+
+        Promise.all([messageQuery, conversationQuery])
+            .then((result) => {
+                if (result[0].deletedCount > 0 && result[1].deletedCount > 0) {
+                    res.json({
+                        status: 'success',
+                        status_code: 200,
+                        message: 'Xóa thành công cuộc trò chuyện',
+                    });
+                } else {
+                    res.status(422).json({
+                        status: 'error',
+                        status_code: 422,
+                        message: 'Xóa không thành công !',
+                    });
+                }
+            })
+            .catch((error) => {
+                return res.status(422).json({
+                    status: 'error',
+                    status_code: 422,
+                    message: error,
+                });
+            });
     } catch (error) {
         return res.status(422).json({
             status: 'error',

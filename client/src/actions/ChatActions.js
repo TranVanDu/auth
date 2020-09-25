@@ -59,3 +59,35 @@ export const getConversationDetails = (id, data) => (dispatch) => {
             });
     });
 };
+
+export const createConversation = (data) => (dispatch) => {
+    return new Promise((reslove, reject) => {
+        return api
+            .post(`${API_URL}/chat`, data)
+            .then((res) => {
+                reslove(res.data);
+            })
+            .catch((error) => {
+                console.log('error', error);
+                toast.error(error.response.data.message);
+                reject(error);
+            });
+    });
+};
+
+export const deleteConversation = (data) => (dispatch) => {
+    return new Promise((reslove, reject) => {
+        console.log(data);
+        return api
+            .delete(`${API_URL}/chat`, { data: { id: data } })
+            .then((res) => {
+                reslove(res.data);
+                toast.success(res.data.message);
+            })
+            .catch((error) => {
+                console.log('error', error);
+                toast.error(error.response.data.message);
+                reject(error);
+            });
+    });
+};

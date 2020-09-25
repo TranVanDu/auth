@@ -11,7 +11,9 @@ import {
 } from '@ant-design/icons';
 import ChatConversation from './ChatConversation';
 import ChatMessage from './ChatMessage';
+import { useSelector } from 'react-redux';
 import useWindowDimensions from '../../SharedComponent/useWindowSize';
+import SearchUser from './SearchUser';
 import './ChatPage.scss';
 
 const { TabPane } = Tabs;
@@ -20,8 +22,10 @@ export default function ChatPage() {
     // const [mount, setMount] = useState(true);
 
     const [conversation, setConversation] = useState({});
+    const [load, setLoad] = useState(false);
     const [visible, setVisible] = useState(false);
     const [visibleCoversation, setVisibleConversation] = useState(false);
+    const user = useSelector((state) => state.user.user);
 
     const { width } = useWindowDimensions();
 
@@ -46,16 +50,21 @@ export default function ChatPage() {
         setConversation(item);
     };
 
+    const setLoading = (value) => {
+        setLoad(value);
+    };
+
     return (
         <div className="chatPage">
             <Row gutter={{ xs: 0, sm: 0, md: 0, lg: 0 }}>
                 <Col lg={6} md={9} xs={0}>
                     <Card
-                        style={{ minHeight: 'calc(100vh - 110px)' }}
+                        style={{ minHeight: 'calc(100vh)' }}
                         title={
                             <div>
-                                <Avatar src="https://photo-1-baomoi.zadn.vn/w1000_r1/2020_02_06_180_33882101/e01e378f00cce992b0dd.jpg" />
-                                Madara
+                                <Avatar src={user.avatar} />
+                                {'  '}
+                                {user.name}
                             </div>
                         }
                         extra={
@@ -74,7 +83,11 @@ export default function ChatPage() {
                                 }
                                 key="1"
                             >
-                                <ChatConversation onDetail={onDetail} />
+                                <ChatConversation
+                                    onDetail={onDetail}
+                                    load={load}
+                                    setLoading={setLoading}
+                                />
                             </TabPane>
                             <TabPane
                                 tab={
@@ -83,7 +96,9 @@ export default function ChatPage() {
                                     />
                                 }
                                 key="2"
-                            ></TabPane>
+                            >
+                                {/* <SearchUser /> */}
+                            </TabPane>
                             <TabPane
                                 tab={
                                     <SearchOutlined
@@ -91,22 +106,17 @@ export default function ChatPage() {
                                     />
                                 }
                                 key="3"
-                            ></TabPane>
+                            >
+                                <SearchUser onDetail={onDetail} />
+                            </TabPane>
                         </Tabs>
                     </Card>
                 </Col>
 
                 <Col lg={12} md={15} xs={24}>
-                    {!conversation.id ? (
+                    {!conversation.name ? (
                         <Card
-                            style={{ minHeight: 'calc(100vh - 110px)' }}
-                            // title={
-                            //   <div>
-                            //     <Avatar src="https://photo-1-baomoi.zadn.vn/w1000_r1/2020_02_06_180_33882101/e01e378f00cce992b0dd.jpg" />
-                            //     {'   '}
-                            //     Madara
-                            //   </div>
-                            // }
+                            style={{ minHeight: 'calc(100vh )' }}
                             extra={
                                 width < 992 ? (
                                     <Space size="middle">
@@ -126,7 +136,7 @@ export default function ChatPage() {
                             <div
                                 style={{
                                     textAlign: 'center',
-                                    marginTop: '200px',
+                                    marginTop: '150px',
                                 }}
                             >
                                 <div>
@@ -159,12 +169,13 @@ export default function ChatPage() {
                             item={conversation}
                             onDawerConversation={showDrawerConversation}
                             onDawerInfo={showDrawer}
+                            setLoading={setLoading}
                         />
                     )}
                 </Col>
                 <Col lg={6} md={0} xs={0}>
                     <Card
-                        style={{ minHeight: 'calc(100vh - 110px)' }}
+                        style={{ minHeight: 'calc(100vh)' }}
                         title={'thông tin'}
                         extra={
                             <Space size="middle">
@@ -191,11 +202,12 @@ export default function ChatPage() {
                 visible={visibleCoversation}
             >
                 <Card
-                    style={{ minHeight: 'calc(100vh - 110px)' }}
+                    style={{ minHeight: 'calc(100vh)' }}
                     title={
                         <div>
-                            <Avatar src="https://photo-1-baomoi.zadn.vn/w1000_r1/2020_02_06_180_33882101/e01e378f00cce992b0dd.jpg" />
-                            Madara
+                            <Avatar src={user.avatar} />
+                            {'  '}
+                            {user.name}
                         </div>
                     }
                     extra={
@@ -212,7 +224,11 @@ export default function ChatPage() {
                             }
                             key="1"
                         >
-                            <ChatConversation onDetail={onDetail} />
+                            <ChatConversation
+                                onDetail={onDetail}
+                                load={load}
+                                setLoading={setLoading}
+                            />
                         </TabPane>
                         <TabPane
                             tab={<UserOutlined style={{ fontSize: '20px' }} />}
@@ -223,7 +239,9 @@ export default function ChatPage() {
                                 <SearchOutlined style={{ fontSize: '20px' }} />
                             }
                             key="3"
-                        ></TabPane>
+                        >
+                            <SearchUser onDetail={onDetail} />
+                        </TabPane>
                     </Tabs>
                 </Card>
             </Drawer>

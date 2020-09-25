@@ -118,6 +118,9 @@ function MessageItem({ messages, userId }) {
                     </div>
                 );
             })}
+            {messages.length === 0 ? (
+                <div>Hãy gửi tin nhắn để bắt đầu cuộc trò chuyện</div>
+            ) : null}
         </div>
     );
 }

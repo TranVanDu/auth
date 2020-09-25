@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
-import { List, Avatar, Badge } from 'antd';
+import { List, Avatar, Badge, Spin, Popover } from 'antd';
 import { connect } from 'react-redux';
-import { getConversations } from '../../../actions/ChatActions';
+import {
+    getConversations,
+    deleteConversation,
+} from '../../../actions/ChatActions';
 import moment from 'moment';
 import { getSocket } from '../../../socket';
+import { DeleteOutlined } from '@ant-design/icons';
 import Truncate from 'react-truncate';
 import InfiniteScroll from 'react-infinite-scroller';
+import { toast } from 'react-toastify';
 
 class ChatConversation extends Component {
     // static propTypes = {
@@ -18,40 +23,111 @@ class ChatConversation extends Component {
         chat: [],
         isLoading: false,
         hasMore: true,
+        page: 0,
+        total: 0,
+        total_page: 0,
     };
 
     async componentDidMount() {
         this._isMounted = true;
         let data = await this.props.getConversations();
         if (this._isMounted) {
+            let more = data.data.page < data.data.total_page ? true : false;
             this.setState({
                 chat: data.data.conversations,
+                page: data.data.page,
+                hasMore: more,
+                total: data.data.total,
+                total_page: data.data.total_page,
             });
             if (this.state.chat.length > 0) {
-                getSocket().on('res-last-message', (data) => {
-                    if (data) {
-                        let chat = [...this.state.chat];
-                        let index = this.state.chat.findIndex((item, index) => {
-                            return (
-                                item._id.toString() ===
-                                data.conversationId.toString()
+                if (getSocket()) {
+                    getSocket().on('res-last-message', (data) => {
+                        if (data) {
+                            let chat = [...this.state.chat];
+                            let index = this.state.chat.findIndex(
+                                (item, index) => {
+                                    return (
+                                        item._id.toString() ===
+                                        data.conversationId.toString()
+                                    );
+                                }
                             );
-                        });
 
-                        chat[index] = {
-                            ...chat[index],
-                            lastest_chat: data,
-                        };
+                            chat[index] = {
+                                ...chat[index],
+                                lastest_chat: data,
+                            };
 
-                        this.setState({
-                            ...this.state,
-                            chat: chat,
-                        });
-                    }
+                            this.setState({
+                                ...this.state,
+                                chat: chat,
+                            });
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    async componentDidUpdate(prevProps, prevState) {
+        if (this.props.load === true && this.props.load !== prevProps.load) {
+            let data = await this.props.getConversations();
+            if (data) {
+                this.props.setLoading(false);
+                this.setState({
+                    ...this.state,
+                    chat: data.data.conversations,
                 });
             }
         }
     }
+
+    handleInfiniteOnLoad = () => {
+        if (this.state.page === this.state.total_page) {
+            toast.success(
+                'Toàn bộ cuộc trò chuyện trên hệ thống đã được hiển thị!'
+            );
+
+            this.setState({
+                hasMore: false,
+            });
+
+            return;
+        } else {
+            this.props
+                .getConversationDetails(this.props.item.id, {
+                    page: this.state.page + 1,
+                })
+                .then((res) => {
+                    setTimeout(() => {
+                        this.setState({
+                            message: [
+                                ...res.data.conversation.message,
+                                ...this.state.message,
+                            ],
+                            page: res.data.pagination.page,
+                        });
+                    }, 3000);
+                });
+        }
+    };
+
+    onDeleteConversation = async (id) => {
+        try {
+            await this.props.deleteConversation([id]);
+            let conversation = this.state.chat.filter((item, index) => {
+                return item._id.toString() !== id.toString();
+            });
+            console.log(conversation);
+            this.setState({
+                ...this.state,
+                chat: conversation,
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     componentWillUnmount() {
         this._isMounted = false;
@@ -59,7 +135,7 @@ class ChatConversation extends Component {
 
     render() {
         const { user } = this.props;
-        const { isLoading, hasMore, chat } = this.state;
+        const { hasMore, chat } = this.state;
 
         const conversations = chat.map((item) => {
             return {
@@ -80,9 +156,10 @@ class ChatConversation extends Component {
             <InfiniteScroll
                 initialLoad={false}
                 pageStart={0}
-                // loadMore={this.handleInfiniteOnLoad}
-                hasMore={!isLoading && hasMore}
+                loadMore={this.handleInfiniteOnLoad}
+                hasMore={hasMore}
                 useWindow={false}
+                loader={<Spin key={0} />}
             >
                 <List
                     itemLayout="horizontal"
@@ -103,11 +180,22 @@ class ChatConversation extends Component {
                         return (
                             <List.Item
                                 style={{ cursor: 'pointer', padding: '10px' }}
-                                onClick={() => {
-                                    this.props.onDetail(item);
-                                }}
+                                actions={[
+                                    <Popover content="Xóa cuộc trò chuyện">
+                                        <DeleteOutlined
+                                            onClick={() =>
+                                                this.onDeleteConversation(
+                                                    item._id
+                                                )
+                                            }
+                                        />
+                                    </Popover>,
+                                ]}
                             >
                                 <List.Item.Meta
+                                    onClick={() => {
+                                        this.props.onDetail(item);
+                                    }}
                                     avatar={<Avatar src={item.url} />}
                                     title={item.name}
                                     description={
@@ -133,6 +221,7 @@ class ChatConversation extends Component {
                                         </div>
                                     }
                                 />
+
                                 {user._id === item.lastest_chat.sender._id ||
                                 item.lastest_chat.is_read.toString() ===
                                     'true' ? (
@@ -166,6 +255,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         getConversations: () => dispatch(getConversations()),
+        deleteConversation: (data) => dispatch(deleteConversation(data)),
     };
 };
 

@@ -18,6 +18,23 @@
 }
 .ant-drawer-body {
     padding: 0px !important;
+    .ant-card-body {
+        padding: 0px;
+
+        .ant-tabs-nav-list {
+            width: -webkit-fill-available;
+            justify-content: space-around;
+
+            .ant-tabs-tab {
+                margin: 0px;
+                padding: 20px;
+            }
+        }
+    }
+}
+
+.ant-tabs-top > .ant-tabs-nav {
+    margin: 0px !important;
 }
 
 @media (max-width: 767px) {

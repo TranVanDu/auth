@@ -6,6 +6,7 @@ import { getSocket } from '../../../socket';
 import {
     getConversationDetails,
     createMessage,
+    createConversation,
 } from '../../../actions/ChatActions';
 import MessageItem from './MessageItem';
 import { connect } from 'react-redux';
@@ -53,26 +54,33 @@ class ChatMessage extends Component {
 
     async componentDidMount() {
         window.addEventListener('resize', this.handleResize);
-        let message = await this.props.getConversationDetails(
-            this.props.item.id
-        );
+        if (this.props.item.id) {
+            let message = await this.props.getConversationDetails(
+                this.props.item.id
+            );
 
-        if (message) {
-            let more =
-                message.data.pagination.page ===
-                message.data.pagination.total_page
-                    ? false
-                    : true;
+            if (message) {
+                let more =
+                    message.data.pagination.page ===
+                    message.data.pagination.total_page
+                        ? false
+                        : true;
+                this.setState({
+                    isLoading: false,
+                    hasMore: more,
+                    message: message.data.conversation.message,
+                    total: message.data.pagination.total,
+                    page: message.data.pagination.page,
+                    total_page: message.data.pagination.total_page,
+                });
+
+                this.ref.current.scrollToBottom();
+            }
+        } else {
             this.setState({
                 isLoading: false,
-                hasMore: more,
-                message: message.data.conversation.message,
-                total: message.data.pagination.total,
-                page: message.data.pagination.page,
-                total_page: message.data.pagination.total_page,
+                hasMore: false,
             });
-
-            this.ref.current.scrollToBottom();
         }
 
         getSocket().on('res-send-message', (data) => {
@@ -91,7 +99,6 @@ class ChatMessage extends Component {
     }
 
     handleInfiniteOnLoad = () => {
-        console.log(this.state.page, this.state.total_page);
         if (this.state.page === this.state.total_page) {
             toast.success(
                 'Toàn bộ cuộc trò chuyện trên hệ thống đã được hiển thị!'
@@ -103,7 +110,6 @@ class ChatMessage extends Component {
 
             return;
         } else {
-            console.log('api');
             this.props
                 .getConversationDetails(this.props.item.id, {
                     page: this.state.page + 1,
@@ -188,23 +194,52 @@ class ChatMessage extends Component {
     sendMessage = async (e) => {
         e.preventDefault();
         let data = this.state.value;
-        let id = this.state.id;
-        let message = await this.props.createMessage(id, {
-            message: data,
-            conversationType: 'Conversation',
-        });
-
-        if (message) {
-            this.setState({
-                ...this.state,
-                message: [
-                    ...this.state.message,
-                    message.data.conversation.message,
-                ],
-                value: '',
-                total: this.state.total + 1,
+        if (this.state.message.length > 0) {
+            let id = this.state.id;
+            let message = await this.props.createMessage(id, {
+                message: data,
+                conversationType: 'Conversation',
             });
-            this.ref.current.scrollToBottom();
+
+            if (message) {
+                this.setState({
+                    ...this.state,
+                    message: [
+                        ...this.state.message,
+                        message.data.conversation.message,
+                    ],
+                    value: '',
+                    total: this.state.total + 1,
+                });
+                this.ref.current.scrollToBottom();
+            }
+        } else {
+            this.props
+                .createConversation({ id: this.props.item.userId })
+                .then(async (res) => {
+                    let message = await this.props.createMessage(
+                        res.data.conversation._id,
+                        {
+                            message: data,
+                            conversationType: 'Conversation',
+                        }
+                    );
+
+                    if (message) {
+                        this.setState({
+                            ...this.state,
+                            message: [
+                                ...this.state.message,
+                                message.data.conversation.message,
+                            ],
+                            value: '',
+                            total: this.state.total + 1,
+                        });
+
+                        this.props.setLoading(true);
+                    }
+                })
+                .catch((error) => {});
         }
     };
 
@@ -219,7 +254,7 @@ class ChatMessage extends Component {
         return (
             <Card
                 style={{
-                    minHeight: 'calc(100vh - 110px)',
+                    minHeight: 'calc(100vh)',
                     position: 'relative',
                 }}
                 title={
@@ -263,7 +298,7 @@ class ChatMessage extends Component {
                             <Scrollbars
                                 ref={this.ref}
                                 autoHeight
-                                autoHeightMin={'calc(100vh - 250px)'}
+                                autoHeightMin={'calc(100vh - 120px)'}
                                 autoHide
                             >
                                 <InfiniteScroll
@@ -331,6 +366,7 @@ const mapDispatchToProps = (dispatch) => {
         getConversationDetails: (id, data) =>
             dispatch(getConversationDetails(id, data)),
         createMessage: (id, data) => dispatch(createMessage(id, data)),
+        createConversation: (data) => dispatch(createConversation(data)),
     };
 };
 
