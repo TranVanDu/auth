@@ -68,6 +68,10 @@ let initSocket = (io) => {
                     if (clients[data.sender._id]) {
                         clients[data.sender._id].forEach((socketId) => {
                             io.sockets.connected[socketId].emit(
+                                'res-send-message',
+                                data
+                            );
+                            io.sockets.connected[socketId].emit(
                                 'res-last-message',
                                 data
                             );

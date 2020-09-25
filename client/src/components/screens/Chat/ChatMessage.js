@@ -89,8 +89,7 @@ class ChatMessage extends Component {
             getSocket().on('res-send-message', (data) => {
                 if (
                     data.conversationId.toString() ===
-                        this.props.item.id.toString() &&
-                    data.sender._id !== this.props.user._id
+                    this.props.item.id.toString()
                 ) {
                     this.setState({
                         message: [...this.state.message, data],
@@ -209,23 +208,16 @@ class ChatMessage extends Component {
         let data = this.state.value;
         if (this.state.message.length > 0) {
             let id = this.state.id;
-            let message = await this.props.createMessage(id, {
+            this.props.createMessage(id, {
                 message: data,
                 conversationType: 'Conversation',
             });
 
-            if (message) {
-                this.setState({
-                    ...this.state,
-                    message: [
-                        ...this.state.message,
-                        message.data.conversation.message,
-                    ],
-                    value: '',
-                    total: this.state.total + 1,
-                });
-                this.ref.current.scrollToBottom();
-            }
+            this.setState({
+                ...this.state,
+                value: '',
+            });
+            this.ref.current.scrollToBottom();
         } else {
             this.props
                 .createConversation({ id: this.props.item.userId })
